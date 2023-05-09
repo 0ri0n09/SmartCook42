@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>SmartCook | Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-auth-form #loginForm (formSubmitted)="loginUser($event)" [actionButtonText]="'Login'"></app-auth-form>
+
+  <ion-button expand="block" fill="clear" routerLink="/signup">
+    New account
+  </ion-button>
+
+  <ion-button expand="block" fill="clear" routerLink="/reset-password">
+    Forgot password ?
+  </ion-button>
+</ion-content>

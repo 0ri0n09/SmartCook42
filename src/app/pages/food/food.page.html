@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>SmartCook | My Fridge</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid *ngIf="ingredients && ingredients.length > 0; else emptyFridge">
+    <ion-row>
+      <ion-col *ngFor="let ingredient of ingredients">
+        <ion-card>
+          <img [src]="ingredient.image" alt="No image of the ingredient found">
+          <ion-card-header>
+            <ion-card-subtitle>{{ ingredient.name }}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <!-- Add any additional information about the ingredient here -->
+          </ion-card-content>
+          <ion-button color="danger" (click)="deleteIngredient(ingredient.id)">
+            Delete
+          </ion-button>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ng-template #emptyFridge>
+    <div class="empty-fridge">
+      <ion-icon class="icon" name="add-circle"></ion-icon>
+      <p class="text">Your fridge is empty, fill it :)</p>
+    </div>
+  </ng-template>
+</ion-content>

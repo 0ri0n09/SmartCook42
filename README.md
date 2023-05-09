@@ -1,1 +1,2 @@
-# SmartCook42
+# SmartCook
+Projet UF - B3

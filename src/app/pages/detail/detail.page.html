@@ -1,0 +1,97 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>SmartCook | Detail</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ng-container *ngIf="isLoaded">
+    <h1>{{recipe.title}}</h1>
+
+    <img [src]="recipe.image" alt="{{recipe.title}}">
+
+    <h2>Information</h2>
+    <p>Created by : {{recipe.sourceName}}</p>
+    <p>Preparation : {{recipe.readyInMinutes}} minutes</p>
+    <p>Servings : {{recipe.servings}}</p>
+
+    <h2>Ingredients</h2>
+    <img src="https://api.spoonacular.com/recipes/{{this.id}}/ingredientWidget.png?apiKey=56525c6326e44e888035f4c90347c1e9" alt="Ingredient Widget">
+
+    <h2>Instructions</h2>
+    <ol>
+      <li *ngFor="let step of recipe.analyzedInstructions[0].steps">
+        {{step.step}}
+        <br><br>
+      </li>
+    </ol>
+
+    <h2>Nutritional information</h2>
+    <img src="https://api.spoonacular.com/recipes/{{this.id}}/nutritionWidget.png?apiKey=56525c6326e44e888035f4c90347c1e9" alt="Nutrition Widget">
+
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6" class="icon-col">
+          <div class="icon-container">
+            <ion-button [disabled]="isFavorite()" (click)="toggleFavorite(recipe)" color="warning">
+              Add to Favorites
+            </ion-button>
+          </div>
+        </ion-col>
+        <ion-col size="6" class="icon-col">
+          <div class="icon-container">
+            <ion-button [routerLink]="'/favorites'" color="success">
+              See Favorites
+            </ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <h2>Similar Recipes</h2>
+    <ion-slides>
+      <ion-slide *ngFor="let recipe of similarRecipes">
+        <ion-card style="width: 100%">
+          <ion-card-header>
+            <ion-card-title>{{ recipe.title }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-grid>
+              <ion-row>
+                <ion-col size="6" class="icon-col">
+                  <div class="icon-container">
+                    <ion-icon name="people-outline" color="primary"></ion-icon>
+                    <p class="icon-label">{{ recipe.servings }}</p>
+                  </div>
+                </ion-col>
+                <ion-col size="6" class="icon-col">
+                  <div class="icon-container">
+                    <ion-icon name="time-sharp" color="medium"></ion-icon>
+                    <p class="icon-label">{{ recipe.readyInMinutes }}</p>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+            <ion-grid>
+              <ion-row>
+                <ion-col class="icon-col">
+                  <div class="icon-container">
+                    <ion-button [routerLink]="'/detail/' + recipe.id">View recipe</ion-button>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-content>
+        </ion-card>
+      </ion-slide>
+    </ion-slides>
+
+  </ng-container>
+
+  <ng-container *ngIf="!isLoaded">
+    <p>Loading...</p>
+  </ng-container>
+</ion-content>
