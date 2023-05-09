@@ -5,8 +5,9 @@ import { AlertController } from '@ionic/angular';
 import { UserProfile } from 'src/app/models/user';
 import { ProfileService } from './profile.service';
 import { Observable, Subscription } from 'rxjs';
-import { first, tap } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 import { ProfileStore } from './profile.store';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-profile',
@@ -22,6 +23,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     private router: Router,
     private profileService: ProfileService,
     private alertCtrl: AlertController,
+    private toastController: ToastController,
     private readonly profileStore: ProfileStore
   ) {}
 
@@ -56,8 +58,16 @@ export class ProfilePage implements OnDestroy, OnInit {
           { text: 'Cancel' },
           {
             text: 'Save',
-            handler: data => {
-              this.profileStore.updateUserName(data.fullName);
+            handler: async data => {
+              await this.profileStore.updateUserName(data.fullName);
+              const toast = await this.toastController.create({
+                message: 'Fullname updated',
+                duration: 2000,
+                position: 'top',
+                animated: true,
+                color: 'success'
+              });
+              toast.present();
             },
           },
         ],
@@ -70,15 +80,34 @@ export class ProfilePage implements OnDestroy, OnInit {
     const alert = await this.alertCtrl.create({
       subHeader: 'Change your email',
       inputs: [
-        { type: 'text', name: 'newEmail', placeholder: 'Your new email' },
-        { name: 'password', placeholder: 'Your password', type: 'password' },
+        { type: 'text', name: 'newEmail', placeholder: 'Your new email', value: '',},
+        { name: 'password', placeholder: 'Your password', type: 'password', value: '',},
       ],
       buttons: [
         { text: 'Cancel' },
         {
           text: 'Save',
-          handler: data => {
-            this.profileStore.updateUserEmail({ email: data.newEmail, password: data.password });
+          handler: async data => {
+            if (data.newEmail && data.password) {
+              await this.profileStore.updateUserEmail({ email: data.newEmail, password: data.password });
+              const toast = await this.toastController.create({
+                message: 'Email updated',
+                duration: 2000,
+                position: 'top',
+                animated: true,
+                color: 'success'
+              });
+              toast.present();
+            } else {
+              const errorToast = await this.toastController.create({
+                message: 'Please fill in all fields',
+                duration: 2000,
+                position: 'top',
+                animated: true,
+                color: 'danger'
+              });
+              errorToast.present();
+            }
           },
         },
       ],
@@ -97,8 +126,27 @@ export class ProfilePage implements OnDestroy, OnInit {
         { text: 'Cancel' },
         {
           text: 'Save',
-          handler: data => {
-            this.profileStore.updateUserPassword({ newPassword: data.newPassword, oldPassword: data.oldPassword });
+          handler: async data => {
+            if (data.password && data.oldPassword) {
+              await this.profileStore.updateUserPassword({ newPassword: data.newPassword, oldPassword: data.oldPassword });
+              const toast = await this.toastController.create({
+                message: 'Password updated',
+                duration: 2000,
+                position: 'top',
+                animated: true,
+                color: 'success'
+              });
+              toast.present();
+            } else {
+              const errorToast = await this.toastController.create({
+                message: 'Please fill in all fields',
+                duration: 2000,
+                position: 'top',
+                animated: true,
+                color: 'danger'
+              });
+              errorToast.present();
+            }
           },
         },
       ],

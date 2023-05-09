@@ -75,13 +75,20 @@ export class HomePage {
           },
           {
             text: 'Add',
-            handler: () => {
-              this.favoritesService.addToFavorites(recipe);
-            }
+            handler: async data => {
+              await this.favoritesService.addToFavorites(recipe);
+              const toast = await this.toastController.create({
+                message: 'Recipe added to favorites',
+                duration: 2000,
+                position: 'top',
+                animated: true,
+                color: 'success'
+              });
+              toast.present();
+            },
           }
         ]
       });
-
       await alert.present();
     }
   }

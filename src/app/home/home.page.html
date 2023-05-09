@@ -17,7 +17,7 @@
   <div class="refresh-button-container">
     <ion-button color="light" fill="clear" (click)="refreshRandomRecipes()" class="refresh-button">
       <ion-icon name="refresh"></ion-icon>
-      See 10 differents recipes
+      See 10 others recipes
     </ion-button>
   </div>
 </ion-list>
@@ -64,12 +64,13 @@
               </ion-col>
               <ion-col size="6" class="icon-col">
                 <div class="icon-container">
-                  <ion-button color="warning" [disabled]="isFavorite(recipe)" (click)="toggleFavorite(recipe)">Favorite</ion-button>
+                  <ion-button color="warning" [disabled]="isFavorite(recipe)" (click)="toggleFavorite(recipe)">
+                    <ion-icon name="star"></ion-icon>
+                  </ion-button>
                 </div>
               </ion-col>
             </ion-row>
           </ion-grid>
-
         </ion-card-content>
       </ion-card>
     </ion-slide>
