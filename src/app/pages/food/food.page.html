@@ -6,7 +6,7 @@
 
 <ion-content>
     <!-- Search results -->
-    <ion-searchbar [placeholder]="'Search ingredients for your fridge'" [(ngModel)]="searchQuery"
+    <ion-searchbar [placeholder]="'Search for ingredients...'" [(ngModel)]="searchQuery"
                    (ionChange)="selectIngredients()"></ion-searchbar>
     <ion-grid *ngIf="searchResults && searchResults.length > 0">
         <ion-row>
@@ -51,7 +51,7 @@
 
     <ng-template #emptyFridge>
         <div class="empty-fridge">
-            <p class="text">Your fridge is empty, fill it with the search bar above :)</p>
+            <p class="text">Your fridge is empty.</p>
         </div>
     </ng-template>
 </ion-content>

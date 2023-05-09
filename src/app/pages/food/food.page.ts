@@ -6,6 +6,7 @@ import { catchError, map } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { User } from '@angular/fire/auth';
 import { SpoonacularService } from "../../services/spoonacular.service";
+import {AlertController, LoadingController} from "@ionic/angular";
 
 @Component({
   selector: 'app-food',
@@ -22,17 +23,29 @@ export class FoodPage implements OnInit {
       private firestore: Firestore,
       private authService: AuthService,
       private profileService: ProfileService,
-
-      private spoonacularService: SpoonacularService
+      private spoonacularService: SpoonacularService,
+      private loadingController: LoadingController,
+      private alertController: AlertController
   ) {}
 
-  ngOnInit() {
-    this.ingredients = [];
+  async ngOnInit() {
+      await this.presentLoading();
+      this.ingredients = [];
+      await this.loadIngredients();
+      await this.loadingController.dismiss();
   }
 
   ionViewDidEnter() {
-    this.loadIngredients();
+      this.loadIngredients();
   }
+
+    async presentLoading() {
+        const loading = await this.loadingController.create({
+            message: 'Loading ingredients...',
+        });
+
+        await loading.present();
+    }
 
   async loadIngredients() {
     this.authService.getUser()
@@ -66,24 +79,29 @@ export class FoodPage implements OnInit {
         );
   }
 
-    selectIngredients() {
+    async selectIngredients() {
+        await this.presentLoading();
         this.spoonacularService.searchIngredients(this.searchQuery).subscribe(
-            (response: any) => {
+            async (response: any) => {
                 this.searchResults = response.results;
                 this.searchResults.forEach((searchResult, index) => {
-                    const foundIngredient = this.ingredients.find((ingredient) => ingredient.name === searchResult.name);
+                    const foundIngredient = this.ingredients.find(
+                        (ingredient) => ingredient.name === searchResult.name
+                    );
                     if (foundIngredient) {
                         this.searchResults.splice(index, 1);
                     }
                 });
+                await this.loadingController.dismiss();
             },
-            (error) => {
+            async (error) => {
                 console.log('Error searching ingredients:', error);
+                await this.loadingController.dismiss();
             }
         );
     }
 
-    addIngredient(ingredientId: string, ingredientName: string, ingredientImage: string) {
+    async addIngredient(ingredientId: string, ingredientName: string, ingredientImage: string) {
         const ingredient = {
             id: ingredientId,
             name: ingredientName,
@@ -93,11 +111,18 @@ export class FoodPage implements OnInit {
             this.firestore,
             `users/${this.currentUser.uid}/fridges/fridge/ingredients`
         );
-        addDoc(ingredientsCollection, ingredient).then(() => {
+        try {
+            await addDoc(ingredientsCollection, ingredient);
             this.loadIngredients();
-        }).catch((error) => {
+            const alert = await this.alertController.create({
+                header: 'Ingredient added',
+                message: 'The ingredient has been added successfully.',
+                buttons: ['OK']
+            });
+            await alert.present();
+        } catch (error) {
             console.log('Error adding ingredient:', error);
-        });
+        }
     }
 
     async deleteIngredient(ingredientId: string) {
