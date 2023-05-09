@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { SpoonacularService } from '../services/spoonacular.service';
-import {AlertController, LoadingController} from '@ionic/angular';
-import {FavoritesService} from "../services/favorites.service";
-
-
+import { AlertController, LoadingController } from '@ionic/angular';
+import { FavoritesService } from "../services/favorites.service";
+import { IonSlides } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -13,9 +13,12 @@ import {FavoritesService} from "../services/favorites.service";
 export class HomePage {
   randomRecipes: any[];
 
+  @ViewChild('slides', { static: false }) slides: IonSlides;
+
   constructor(private spoonacularService: SpoonacularService,
               private loadingController: LoadingController,
               private favoritesService: FavoritesService,
+              private toastController: ToastController,
               private alertController: AlertController) {}
 
   async ngOnInit() {
@@ -26,11 +29,30 @@ export class HomePage {
     });
   }
 
+  async refreshRandomRecipes() {
+    try {
+      const recipes: any = await this.spoonacularService.getRandomRecipes(10).toPromise();
+      const toast = await this.toastController.create({
+        message: 'Loading new recipes :)',
+        position: 'top',
+        animated: true,
+        color: 'primary',
+        duration: 2300
+      });
+      toast.present();
+      toast.onDidDismiss();
+      this.randomRecipes = recipes.recipes;
+      await this.loadingController.dismiss();
+      await this.slides.slideTo(0);
+    } catch (error) {
+      console.log('Error while refreshing new recipes', error);
+    }
+  }
+
   async presentLoading() {
     const loading = await this.loadingController.create({
       message: 'Loading recipes...',
     });
-
     await loading.present();
   }
 
@@ -42,7 +64,6 @@ export class HomePage {
     const isFavorite = this.favoritesService.isFavorite(recipe.id);
 
     if (isFavorite) {
-      // Code to remove from favorites (if needed)
     } else {
       const alert = await this.alertController.create({
         header: 'Add to favorites',

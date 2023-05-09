@@ -8,16 +8,24 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
 <ion-list>
-  <ion-list-header>Your 10 recipes of the day :</ion-list-header>
+  <div class="favorite-header">
+    <ion-list>
+      <ion-list-header class="favorite-header-title">Your 10 recipes of the day</ion-list-header>
+    </ion-list>
+  </div>
+  <div class="refresh-button-container">
+    <ion-button color="light" fill="clear" (click)="refreshRandomRecipes()" class="refresh-button">
+      <ion-icon name="refresh"></ion-icon>
+      See 10 differents recipes
+    </ion-button>
+  </div>
 </ion-list>
-
 <ion-content>
-  <ion-slides>
+  <ion-slides #slides>
     <ion-slide *ngFor="let recipe of randomRecipes">
       <ion-card>
-        <img [src]="recipe.image" alt="{{ recipe.title }} image" />
+        <img [src]="recipe.image" alt="No image found for this recipe" />
         <ion-card-header>
           <ion-card-title>{{ recipe.title }}</ion-card-title>
         </ion-card-header>
@@ -49,7 +57,9 @@
             <ion-row>
               <ion-col size="6" class="icon-col">
                 <div class="icon-container">
-                  <ion-button color="success" [routerLink]="'/detail/' + recipe.id">View</ion-button>
+                  <ion-button color="success" [routerLink]="'/detail/' + recipe.id">
+                    <ion-icon name="eye"></ion-icon>
+                  </ion-button>
                 </div>
               </ion-col>
               <ion-col size="6" class="icon-col">
@@ -59,6 +69,7 @@
               </ion-col>
             </ion-row>
           </ion-grid>
+
         </ion-card-content>
       </ion-card>
     </ion-slide>

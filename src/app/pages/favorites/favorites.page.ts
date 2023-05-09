@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {FavoritesService} from "../../services/favorites.service";
+import { FavoritesService } from "../../services/favorites.service";
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-favorites',
@@ -10,7 +11,9 @@ export class FavoritesPage implements OnInit {
 
   favoriteRecipes: any[] = [];
 
-  constructor(private favoritesService: FavoritesService) { }
+  constructor(
+      private favoritesService: FavoritesService,
+      private toastController: ToastController) { }
 
   ngOnInit() {
   }
@@ -19,8 +22,20 @@ export class FavoritesPage implements OnInit {
     this.favoriteRecipes = this.favoritesService.getFavoriteRecipes();
   }
 
-  removeFromFavorites(recipeId: number): void {
-    this.favoritesService.removeFavorite(recipeId);
+  async removeFromFavorites(recipeId: number): Promise<void> {
+    try {
+      this.favoritesService.removeFavorite(recipeId);
+      const toast = await this.toastController.create({
+        message: 'The favorite has been removed successfully',
+        duration: 2000,
+        position: 'top',
+        animated: true,
+        color: 'danger'
+      });
+      toast.present();
+    } catch (error) {
+      console.log('Error removing favorite:', error);
+    }
     this.favoriteRecipes = this.favoritesService.getFavoriteRecipes();
   }
 

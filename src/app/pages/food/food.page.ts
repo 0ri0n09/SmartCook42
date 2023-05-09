@@ -1,43 +1,46 @@
 import { Component, OnInit } from '@angular/core';
-import {Firestore, deleteDoc, doc, getDocs, collection, addDoc} from '@angular/fire/firestore';
+import { Firestore, deleteDoc, doc, getDocs, collection, addDoc} from '@angular/fire/firestore';
 import { AuthService } from '../../services/auth.service';
 import { ProfileService } from '../profile/profile.service';
 import { catchError, map } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { User } from '@angular/fire/auth';
 import { SpoonacularService } from "../../services/spoonacular.service";
-import {AlertController, LoadingController} from "@ionic/angular";
+import { AlertController, LoadingController } from "@ionic/angular";
+import { ToastController } from '@ionic/angular';
 
 @Component({
-  selector: 'app-food',
-  templateUrl: './food.page.html',
-  styleUrls: ['./food.page.scss'],
+    selector: 'app-food',
+    templateUrl: './food.page.html',
+    styleUrls: ['./food.page.scss'],
 })
 export class FoodPage implements OnInit {
-  ingredients: any[];
-  searchQuery: string;
-  searchResults: any[];
-  private currentUser: User;
+    ingredients: any[];
+    searchQuery: string;
+    searchResults: any[];
+    private currentUser: User;
 
-  constructor(
-      private firestore: Firestore,
-      private authService: AuthService,
-      private profileService: ProfileService,
-      private spoonacularService: SpoonacularService,
-      private loadingController: LoadingController,
-      private alertController: AlertController
-  ) {}
+    constructor(
+        private firestore: Firestore,
+        private authService: AuthService,
+        private profileService: ProfileService,
+        private spoonacularService: SpoonacularService,
+        private loadingController: LoadingController,
+        private alertController: AlertController,
+        private toastController: ToastController
+    ) {
+    }
 
-  async ngOnInit() {
-      await this.presentLoading();
-      this.ingredients = [];
-      await this.loadIngredients();
-      await this.loadingController.dismiss();
-  }
+    async ngOnInit() {
+        await this.presentLoading();
+        this.ingredients = [];
+        await this.loadIngredients();
+        await this.loadingController.dismiss();
+    }
 
-  ionViewDidEnter() {
-      this.loadIngredients();
-  }
+    ionViewDidEnter() {
+        this.loadIngredients();
+    }
 
     async presentLoading() {
         const loading = await this.loadingController.create({
@@ -47,37 +50,37 @@ export class FoodPage implements OnInit {
         await loading.present();
     }
 
-  async loadIngredients() {
-    this.authService.getUser()
-        .pipe(
-            map((userAuth) => {
-              this.currentUser = userAuth;
-              return doc(this.firestore, `users/${userAuth.uid}/fridges/fridge`);
-            }),
-            catchError(() => EMPTY)
-        )
-        .subscribe(
-            async (fridgeDocRef) => {
-              try {
-                const ingredientsRef = collection(fridgeDocRef, 'ingredients');
-                const ingredientsSnapshot = await getDocs(ingredientsRef);
-                this.ingredients = ingredientsSnapshot.docs.map((doc) => {
-                  const ingredient = doc.data();
-                  return {
-                    id: doc.id,
-                    name: ingredient.name,
-                    image: ingredient.image,
-                  };
-                });
-              } catch (error) {
-                console.log('Error loading ingredients:', error);
-              }
-            },
-            (error) => {
-              console.log('Error getting user:', error);
-            }
-        );
-  }
+    async loadIngredients() {
+        this.authService.getUser()
+            .pipe(
+                map((userAuth) => {
+                    this.currentUser = userAuth;
+                    return doc(this.firestore, `users/${userAuth.uid}/fridges/fridge`);
+                }),
+                catchError(() => EMPTY)
+            )
+            .subscribe(
+                async (fridgeDocRef) => {
+                    try {
+                        const ingredientsRef = collection(fridgeDocRef, 'ingredients');
+                        const ingredientsSnapshot = await getDocs(ingredientsRef);
+                        this.ingredients = ingredientsSnapshot.docs.map((doc) => {
+                            const ingredient = doc.data();
+                            return {
+                                id: doc.id,
+                                name: ingredient.name,
+                                image: ingredient.image,
+                            };
+                        });
+                    } catch (error) {
+                        console.log('Error loading ingredients:', error);
+                    }
+                },
+                (error) => {
+                    console.log('Error getting user:', error);
+                }
+            );
+    }
 
     async selectIngredients() {
         await this.presentLoading();
@@ -113,24 +116,42 @@ export class FoodPage implements OnInit {
         );
         try {
             await addDoc(ingredientsCollection, ingredient);
+            const index = this.searchResults.findIndex((result) => result.id === ingredientId);
+            if (index !== -1) {
+                this.searchResults = this.searchResults.filter((result) => result.id !== ingredientId);
+            }
             this.loadIngredients();
-            const alert = await this.alertController.create({
-                header: 'Ingredient added',
-                message: 'The ingredient has been added successfully.',
-                buttons: ['OK']
+            const toast = await this.toastController.create({
+                message: 'The ingredient has been added successfully',
+                duration: 2000,
+                position: 'top',
+                animated: true,
+                color: 'success'
             });
-            await alert.present();
+            toast.present();
         } catch (error) {
             console.log('Error adding ingredient:', error);
         }
     }
 
     async deleteIngredient(ingredientId: string) {
-    const ingredientReference = doc(
-        this.firestore,
-        `users/${this.currentUser.uid}/fridges/fridge/ingredients/${ingredientId}`
-    );
-    await deleteDoc(ingredientReference);
-    this.loadIngredients();
-  }
+        const ingredientReference = doc(
+            this.firestore,
+            `users/${this.currentUser.uid}/fridges/fridge/ingredients/${ingredientId}`
+        );
+        try {
+            await deleteDoc(ingredientReference);
+            const toast = await this.toastController.create({
+                message: 'The ingredient has been removed successfully',
+                duration: 2000,
+                position: 'top',
+                animated: true,
+                color: 'danger'
+            });
+            toast.present();
+        } catch (error) {
+            console.log('Error adding ingredient:', error);
+        }
+        this.loadIngredients();
+    }
 }

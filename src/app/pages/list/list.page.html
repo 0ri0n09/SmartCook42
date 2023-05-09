@@ -5,11 +5,14 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-list>
-  <ion-list-header>Note what you need for your next shopping trip :</ion-list-header>
+  <div class="favorite-header">
+    <ion-list>
+      <ion-list-header class="favorite-header-title" style="margin-left: 50px">Your shopping list</ion-list-header>
+      <ion-list class="ion-align-items-center" style="margin-top: 3px">Note what you need for your next shopping trip</ion-list>
+    </ion-list>
+  </div>
 </ion-list>
-
 <ion-item>
   <ion-input placeholder="Name" [(ngModel)]="newItemName"></ion-input>
   <ion-input placeholder="Quantity" [(ngModel)]="newItemQuantity" type="number"></ion-input>
