@@ -1,53 +1,57 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>SmartCook | My Fridge</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>SmartCook | My Fridge</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!-- Search results -->
-  <ion-searchbar [placeholder]="'search and add some ingredients in your fridge'" [(ngModel)]="searchQuery" (ionChange)="selectIngredients()"></ion-searchbar>
-  <ion-grid *ngIf="searchResults && searchResults.length > 0">
-    <ion-row>
-      <ion-col size="6" *ngFor="let result of searchResults">
-        <ion-card class="ingredient-card">
-          <ion-card-header>
-            <ion-card-subtitle><strong>{{ result.name.toUpperCase() }}</strong></ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content class="ingredient-content">
-            <ion-img class="ingredient-image" [src]="'https://spoonacular.com/cdn/ingredients_100x100/' + result.image"></ion-img>
-          </ion-card-content>
-          <ion-button class="add-button" color="primary" (click)="addIngredient(result.id, result.name, result.image)">
-            Add
-          </ion-button>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+    <!-- Search results -->
+    <ion-searchbar [placeholder]="'Search ingredients for your fridge'" [(ngModel)]="searchQuery"
+                   (ionChange)="selectIngredients()"></ion-searchbar>
+    <ion-grid *ngIf="searchResults && searchResults.length > 0">
+        <ion-row>
+            <ion-col size="6" *ngFor="let result of searchResults">
+                <ion-card class="ingredient-card">
+                    <ion-card-header>
+                        <ion-card-title><strong>{{ result.name.toUpperCase() }}</strong></ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content class="ingredient-content">
+                        <ion-img class="ingredient-image"
+                                 [src]="'https://spoonacular.com/cdn/ingredients_100x100/' + result.image"
+                                 alt="No picture found for this ingredient"></ion-img>
+                    </ion-card-content>
+                    <ion-button class="add-button" color="primary"
+                                (click)="addIngredient(result.id, result.name, result.image)">
+                        <ion-icon name="add-circle"></ion-icon>
+                    </ion-button>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <!-- Ingredients in the fridge -->
+    <ion-grid *ngIf="ingredients && ingredients.length > 0; else emptyFridge">
+        <ion-row>
+            <ion-col size="6" *ngFor="let ingredient of ingredients">
+                <ion-card class="ingredient-card">
+                    <ion-card-header>
+                        <ion-card-title><strong>{{ ingredient.name.toUpperCase() }}</strong></ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content class="ingredient-content">
+                        <ion-img class="ingredient-image"
+                                 [src]=ingredient.image
+                                 alt="No picture found for this ingredient"></ion-img>
+                    </ion-card-content>
+                    <ion-button class="add-button" color="danger" (click)="deleteIngredient(ingredient.id)">
+                        <ion-icon name="trash"></ion-icon>
+                    </ion-button>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 
-  <!-- Ingredients in the fridge -->
-  <ion-grid *ngIf="ingredients && ingredients.length > 0; else emptyFridge">
-    <ion-row>
-      <ion-col size="6" *ngFor="let ingredient of ingredients">
-        <ion-card class="ingredient-card">
-          <img class="ingredient-image" [src]="ingredient.image" alt="No image of the ingredient found">
-          <ion-card-header>
-            <ion-card-subtitle><strong>{{ ingredient.name.toUpperCase() }}</strong></ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <!-- Add any additional information about the ingredient here -->
-          </ion-card-content>
-          <ion-button color="danger" (click)="deleteIngredient(ingredient.id)">
-            Delete
-          </ion-button>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-
-  <ng-template #emptyFridge>
-    <div class="empty-fridge">
-      <p class="text">Your fridge is empty, fill it with the search bar above :)</p>
-    </div>
-  </ng-template>
+    <ng-template #emptyFridge>
+        <div class="empty-fridge">
+            <p class="text">Your fridge is empty, fill it with the search bar above :)</p>
+        </div>
+    </ng-template>
 </ion-content>

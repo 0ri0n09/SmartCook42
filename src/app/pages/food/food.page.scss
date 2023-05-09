@@ -26,9 +26,9 @@
 }
 
 .ingredient-image {
-  width: 80px; /* Ajustez la largeur de l'image selon vos besoins */
-  height: 80px; /* Ajustez la hauteur de l'image selon vos besoins */
-  object-fit: cover;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .ingredient-content {
@@ -36,10 +36,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-bottom: 10px; /* Ajustez la marge inférieure selon vos besoins */
+  margin-bottom: 10px;
 }
 
 .add-button {
   width: 100%;
-  margin-top: 10px; /* Ajustez la marge supérieure du bouton selon vos besoins */
+  margin-top: 2px;
 }
