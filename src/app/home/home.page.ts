@@ -62,34 +62,16 @@ export class HomePage {
 
   async toggleFavorite(recipe: any) {
     const isFavorite = this.favoritesService.isFavorite(recipe.id);
-
-    if (isFavorite) {
-    } else {
-      const alert = await this.alertController.create({
-        header: 'Add to favorites',
-        message: 'Do you want to add this recipe to your favorites?',
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel'
-          },
-          {
-            text: 'Add',
-            handler: async data => {
-              await this.favoritesService.addToFavorites(recipe);
-              const toast = await this.toastController.create({
-                message: 'Recipe added to favorites',
-                duration: 2000,
-                position: 'top',
-                animated: true,
-                color: 'success'
-              });
-              toast.present();
-            },
-          }
-        ]
+    if (isFavorite) {} else {
+      await this.favoritesService.addToFavorites(recipe);
+      const toast = await this.toastController.create({
+        message: 'Recipe added to favorites',
+        duration: 2000,
+        position: 'top',
+        animated: true,
+        color: 'success'
       });
-      await alert.present();
+      toast.present();
     }
   }
 }
