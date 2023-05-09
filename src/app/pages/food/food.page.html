@@ -5,13 +5,34 @@
 </ion-header>
 
 <ion-content>
+  <!-- Search results -->
+  <ion-searchbar [placeholder]="'search and add some ingredients in your fridge'" [(ngModel)]="searchQuery" (ionChange)="selectIngredients()"></ion-searchbar>
+  <ion-grid *ngIf="searchResults && searchResults.length > 0">
+    <ion-row>
+      <ion-col size="6" *ngFor="let result of searchResults">
+        <ion-card class="ingredient-card">
+          <ion-card-header>
+            <ion-card-subtitle><strong>{{ result.name.toUpperCase() }}</strong></ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content class="ingredient-content">
+            <ion-img class="ingredient-image" [src]="'https://spoonacular.com/cdn/ingredients_100x100/' + result.image"></ion-img>
+          </ion-card-content>
+          <ion-button class="add-button" color="primary" (click)="addIngredient(result.id, result.name, result.image)">
+            Add
+          </ion-button>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Ingredients in the fridge -->
   <ion-grid *ngIf="ingredients && ingredients.length > 0; else emptyFridge">
     <ion-row>
-      <ion-col *ngFor="let ingredient of ingredients">
-        <ion-card>
-          <img [src]="ingredient.image" alt="No image of the ingredient found">
+      <ion-col size="6" *ngFor="let ingredient of ingredients">
+        <ion-card class="ingredient-card">
+          <img class="ingredient-image" [src]="ingredient.image" alt="No image of the ingredient found">
           <ion-card-header>
-            <ion-card-subtitle>{{ ingredient.name }}</ion-card-subtitle>
+            <ion-card-subtitle><strong>{{ ingredient.name.toUpperCase() }}</strong></ion-card-subtitle>
           </ion-card-header>
           <ion-card-content>
             <!-- Add any additional information about the ingredient here -->
@@ -26,8 +47,7 @@
 
   <ng-template #emptyFridge>
     <div class="empty-fridge">
-      <ion-icon class="icon" name="add-circle"></ion-icon>
-      <p class="text">Your fridge is empty, fill it :)</p>
+      <p class="text">Your fridge is empty, fill it with the search bar above :)</p>
     </div>
   </ng-template>
 </ion-content>
