@@ -1,6 +1,6 @@
 <ion-header>
     <ion-toolbar>
-        <ion-title>SmartCook | Favorites</ion-title>
+        <ion-title>SmartCook</ion-title>
         <ion-buttons slot="start">
             <ion-back-button defaultHref="/"></ion-back-button>
         </ion-buttons>
@@ -8,12 +8,12 @@
 </ion-header>
 
 <ion-content>
-    <div class="favorite-header">
-        <ion-list>
-            <ion-list-header class="favorite-header-title">Your favorite recipes</ion-list-header>
-        </ion-list>
-    </div>
     <ion-list *ngIf="favoriteRecipes.length > 0; else emptyFavorites">
+        <div class="favorite-header">
+            <ion-list>
+                <ion-list-header class="favorite-header-title">Your favorite recipes</ion-list-header>
+            </ion-list>
+        </div>
         <ion-grid>
             <ion-row>
                 <ion-col size="12" size-md="6" size-lg="4" *ngFor="let recipe of favoriteRecipes">
@@ -23,8 +23,9 @@
                             <ion-card-title>{{ recipe.title }}</ion-card-title>
                         </ion-card-header>
                         <ion-card-content>
-                            <p [innerHTML]="(recipe.summary | slice:0:700) + '...'">{{ recipe.summary | slice:0:150 }}
+                            <p *ngIf="recipe.summary" [innerHTML]="(recipe.summary | slice:0:700) + '...'">{{ recipe.summary | slice:0:150 }}
                                 ...</p>
+                            <p *ngIf="!recipe.summary">This recipe doesn't have a summary.</p>
                             <ion-grid>
                                 <ion-row>
                                     <ion-col size="6" class="icon-col">
@@ -51,7 +52,7 @@
     </ion-list>
     <ng-template #emptyFavorites>
         <div class="empty-favorites">
-            <p class="text">Your favorite page is empty</p>
+            <p class="text">Your favorite page is empty.</p>
         </div>
     </ng-template>
 </ion-content>

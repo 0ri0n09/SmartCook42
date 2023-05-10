@@ -15,8 +15,23 @@ export class SpoonacularService {
     return this.http.get(url);
   }
 
-  searchRecipes(query: string, number: number = 10) {
-    const url = `${this.apiUrl}/recipes/complexSearch?apiKey=${this.apiKey}&query=${query}&number=${number}`;
+  searchRecipes(query: string, number: number = 10, diet?: string, cuisine?: string, intolerances?: string, type?: string, occasion?: string) {
+    let url = `${this.apiUrl}/recipes/complexSearch?apiKey=${this.apiKey}&query=${query}&number=${number}`;
+    if (diet) {
+      url += `&diet=${diet}`;
+    }
+    if (cuisine) {
+      url += `&cuisine=${cuisine}`;
+    }
+    if (intolerances) {
+      url += `&intolerances=${intolerances}`;
+    }
+    if (type) {
+      url += `&type=${type}`;
+    }
+    if (occasion) {
+      url += `&occasion=${occasion}`;
+    }
     return this.http.get(url);
   }
 

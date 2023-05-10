@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>SmartCook | Home</ion-title>
+    <ion-title>SmartCook</ion-title>
     <ion-buttons slot="end">
       <ion-button [routerLink]="'/favorites'">
         <ion-icon color="warning" name="star-half-outline"></ion-icon>
@@ -11,7 +11,7 @@
 <ion-list>
   <div class="favorite-header">
     <ion-list>
-      <ion-list-header class="favorite-header-title">Your 10 recipes of the day</ion-list-header>
+      <ion-list-header class="favorite-header-title">My 10 recipes of the day</ion-list-header>
     </ion-list>
   </div>
   <div class="refresh-button-container">
@@ -21,6 +21,7 @@
     </ion-button>
   </div>
 </ion-list>
+
 <ion-content>
   <ion-slides #slides>
     <ion-slide *ngFor="let recipe of randomRecipes">
