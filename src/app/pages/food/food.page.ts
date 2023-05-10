@@ -46,7 +46,6 @@ export class FoodPage implements OnInit {
         const loading = await this.loadingController.create({
             message: 'Loading ingredients...',
         });
-
         await loading.present();
     }
 

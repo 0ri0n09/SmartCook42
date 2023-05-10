@@ -1,0 +1,18 @@
+.empty-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.empty-results .icon {
+  color: green;
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.empty-results .text {
+  font-size: 1.5rem;
+}
