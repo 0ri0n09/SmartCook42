@@ -1,6 +1,7 @@
 <ion-header>
     <ion-toolbar>
         <ion-title>SmartCook</ion-title>
+        <script src="cordova.js"></script>
     </ion-toolbar>
 </ion-header>
 
@@ -34,6 +35,11 @@
         <ion-list>
             <ion-list-header class="favorite-header-title">My fridge ingredients</ion-list-header>
         </ion-list>
+    </div>
+    <div class="icon-container ion-align-items-center">
+        <ion-button (click)="addIngredientsWithPicture()" color="success">
+            Add ingredients with a picture
+        </ion-button>
     </div>
     <ion-grid *ngIf="ingredients && ingredients.length > 0; else emptyFridge">
         <ion-row>

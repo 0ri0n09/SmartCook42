@@ -1,19 +1,41 @@
-import { Component, OnInit } from '@angular/core';
-import { Firestore, deleteDoc, doc, getDocs, collection, addDoc} from '@angular/fire/firestore';
-import { AuthService } from '../../services/auth.service';
-import { ProfileService } from '../profile/profile.service';
-import { catchError, map } from 'rxjs/operators';
-import { EMPTY } from 'rxjs';
-import { User } from '@angular/fire/auth';
-import { SpoonacularService } from "../../services/spoonacular.service";
-import { AlertController, LoadingController } from "@ionic/angular";
-import { ToastController } from '@ionic/angular';
+import {Component, NgModule, OnInit} from '@angular/core';
+import {Firestore, deleteDoc, doc, getDocs, collection, addDoc} from '@angular/fire/firestore';
+import {AuthService} from '../../services/auth.service';
+import {ProfileService} from '../profile/profile.service';
+import {catchError, map} from 'rxjs/operators';
+import {EMPTY} from 'rxjs';
+import {User} from '@angular/fire/auth';
+import {SpoonacularService} from "../../services/spoonacular.service";
+import {AlertController, LoadingController} from "@ionic/angular";
+import {ToastController} from '@ionic/angular';
+import {Camera} from '@ionic-native/camera/ngx';
+
+interface CameraOptions {
+    quality?: number;
+    destinationType?: number;
+    sourceType?: number;
+    encodingType?: number;
+    mediaType?: number;
+    allowEdit?: boolean;
+    correctOrientation?: boolean;
+    saveToPhotoAlbum?: boolean;
+    cameraDirection?: number;
+}
+
+@NgModule({
+    providers: [
+        Camera,
+    ],
+})
+export class AppModule {
+}
 
 @Component({
     selector: 'app-food',
     templateUrl: './food.page.html',
     styleUrls: ['./food.page.scss'],
 })
+
 export class FoodPage implements OnInit {
     ingredients: any[];
     searchQuery: string;
@@ -27,6 +49,7 @@ export class FoodPage implements OnInit {
         private spoonacularService: SpoonacularService,
         private loadingController: LoadingController,
         private alertController: AlertController,
+        private camera: Camera,
         private toastController: ToastController
     ) {
     }
@@ -152,5 +175,70 @@ export class FoodPage implements OnInit {
             console.log('Error adding ingredient:', error);
         }
         this.loadIngredients();
+    }
+
+    async addIngredientsWithPicture() {
+        try {
+            const options: CameraOptions = {
+                quality: 80,
+                destinationType: this.camera.DestinationType.DATA_URL,
+                sourceType: this.camera.PictureSourceType.CAMERA,
+                encodingType: this.camera.EncodingType.JPEG,
+                mediaType: this.camera.MediaType.PICTURE,
+                correctOrientation: true,
+            };
+            this.camera
+                .getPicture(options)
+                .then((imageData) => {
+                    const apiKey = 'AIzaSyCzM3dSOLLxBqEOrthKOHYR6iqXNYrfSAA';
+                    const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
+                    const requestBody = {
+                        requests: [
+                            {
+                                image: {
+                                    content: imageData,
+                                },
+                                features: [
+                                    {
+                                        type: 'LABEL_DETECTION',
+                                        maxResults: 10,
+                                    },
+                                ],
+                            },
+                        ],
+                    };
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestBody),
+                    })
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error('Error calling Google Cloud Vision API');
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            // Traitez la réponse de l'API Cloud Vision
+                            const labels = data.responses[0].labelAnnotations;
+                            labels.forEach((label) => {
+                                //const ingredientName = label.description;
+                                console.log(data);
+                                console.log(label.description);
+                                // Ajoutez le nom de l'ingrédient à votre liste d'ingrédients dans le frigo
+                            });
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error);
+                        });
+                })
+                .catch((error) => {
+                    console.error('Camera error:', error);
+                });
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 }
