@@ -33,6 +33,7 @@
     "@ngrx/component-store": "^13.2.0",
     "cordova": "^11.1.0",
     "cordova-android": "10.1.2",
+    "cordova-plugin-camera": "^6.0.0",
     "firebase": "^9.8.3",
     "rxjs": "~6.6.0",
     "tslib": "^2.4.0",
