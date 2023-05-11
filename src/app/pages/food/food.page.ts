@@ -26,11 +26,12 @@ interface CameraOptions {
     providedIn:'root'
 })
 
-/*@NgModule({
+@NgModule({
     providers: [
         Camera,
     ],
-})*/
+})
+
 export class AppModule {
 }
 
