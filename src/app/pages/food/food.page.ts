@@ -26,11 +26,11 @@ interface CameraOptions {
     providedIn:'root'
 })
 
-/*@NgModule({
+@NgModule({
     providers: [
         Camera,
     ],
-})*/
+})
 export class AppModule {
 }
 
@@ -184,64 +184,62 @@ export class FoodPage implements OnInit {
 
     async addIngredientsWithPicture() {
         try {
-            const options: CameraOptions = {
-                quality: 80,
-                destinationType: this.camera.DestinationType.DATA_URL,
-                sourceType: this.camera.PictureSourceType.CAMERA,
-                encodingType: this.camera.EncodingType.JPEG,
-                mediaType: this.camera.MediaType.PICTURE,
-                correctOrientation: true,
-            };
-            this.camera
-                .getPicture(options)
-                .then((imageData) => {
-                    const apiKey = 'AIzaSyCzM3dSOLLxBqEOrthKOHYR6iqXNYrfSAA';
-                    const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
-                    const requestBody = {
-                        requests: [
-                            {
-                                image: {
-                                    content: imageData,
-                                },
-                                features: [
-                                    {
-                                        type: 'LABEL_DETECTION',
-                                        maxResults: 10,
-                                    },
-                                ],
+            const imagePath = 'assets/imgs/frigo.jpg';
+
+            const response = await fetch(imagePath);
+            if (!response.ok) {
+                throw new Error('Erreur lors du chargement de l\'image');
+            }
+
+            const blob = await response.blob();
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const imageData = reader.result;
+
+                const apiKey = 'AIzaSyCzM3dSOLLxBqEOrthKOHYR6iqXNYrfSAA';
+                const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
+                const requestBody = {
+                    requests: [
+                        {
+                            image: {
+                                content: imageData,
                             },
-                        ],
-                    };
-                    fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
+                            features: [
+                                {
+                                    type: 'LABEL_DETECTION',
+                                    maxResults: 10,
+                                },
+                            ],
                         },
-                        body: JSON.stringify(requestBody),
-                    })
-                        .then((response) => {
-                            if (!response.ok) {
-                                throw new Error('Error calling Google Cloud Vision API');
-                            }
-                            return response.json();
-                        })
-                        .then((data) => {
-                            const labels = data.responses[0].labelAnnotations;
-                            labels.forEach((label) => {
-                                //const ingredientName = label.description;
-                                console.log(data);
-                                console.log(label.description);
-                            });
-                        })
-                        .catch((error) => {
-                            console.error('Error:', error);
-                        });
+                    ],
+                };
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody),
                 })
-                .catch((error) => {
-                    console.error('Camera error:', error);
-                });
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Erreur lors de l\'appel à l\'API Google Cloud Vision');
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        const labels = data.responses[0].labelAnnotations;
+                        labels.forEach((label) => {
+                            console.log(data);
+                            console.log(label.description);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Erreur :', error);
+                    });
+            };
+            reader.readAsDataURL(blob);
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Erreur :', error);
         }
     }
 }
