@@ -78,6 +78,12 @@ Apache-2.0
 @firebase/webchannel-wrapper
 Apache-2.0
 
+@ionic-native/camera
+MIT
+
+@ionic-native/core
+MIT
+
 @ionic/angular
 MIT
 
