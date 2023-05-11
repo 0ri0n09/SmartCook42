@@ -1,4 +1,4 @@
-import {Component, NgModule, OnInit} from '@angular/core';
+import {Component, Injectable, NgModule, OnInit} from '@angular/core';
 import {Firestore, deleteDoc, doc, getDocs, collection, addDoc} from '@angular/fire/firestore';
 import {AuthService} from '../../services/auth.service';
 import {ProfileService} from '../profile/profile.service';
@@ -8,7 +8,7 @@ import {User} from '@angular/fire/auth';
 import {SpoonacularService} from "../../services/spoonacular.service";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {ToastController} from '@ionic/angular';
-import {Camera} from '@ionic-native/camera/ngx';
+import { Camera } from '@ionic-native/camera/ngx';
 
 interface CameraOptions {
     quality?: number;
@@ -22,11 +22,15 @@ interface CameraOptions {
     cameraDirection?: number;
 }
 
-@NgModule({
+@Injectable({
+    providedIn:'root'
+})
+
+/*@NgModule({
     providers: [
         Camera,
     ],
-})
+})*/
 export class AppModule {
 }
 
@@ -34,6 +38,7 @@ export class AppModule {
     selector: 'app-food',
     templateUrl: './food.page.html',
     styleUrls: ['./food.page.scss'],
+    providers: [Camera]
 })
 
 export class FoodPage implements OnInit {
@@ -221,13 +226,11 @@ export class FoodPage implements OnInit {
                             return response.json();
                         })
                         .then((data) => {
-                            // Traitez la réponse de l'API Cloud Vision
                             const labels = data.responses[0].labelAnnotations;
                             labels.forEach((label) => {
                                 //const ingredientName = label.description;
                                 console.log(data);
                                 console.log(label.description);
-                                // Ajoutez le nom de l'ingrédient à votre liste d'ingrédients dans le frigo
                             });
                         })
                         .catch((error) => {

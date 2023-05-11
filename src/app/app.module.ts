@@ -27,6 +27,7 @@ import { FormsModule } from '@angular/forms';
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    [Camera],
     Camera
   ],
   bootstrap: [AppComponent],
