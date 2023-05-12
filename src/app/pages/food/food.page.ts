@@ -194,7 +194,6 @@ export class FoodPage implements OnInit {
                 message: '<img src="' + base64Image + '">',
                 buttons: ['OK']
             });
-
             await alert.present();
             const visionAPIRequest = {
                 requests: [
@@ -212,11 +211,31 @@ export class FoodPage implements OnInit {
                 ],
             };
             const response: any = await this.http.post<any>(visionAPIUrl, visionAPIRequest).toPromise();
+            const alert2 = await this.alertController.create({
+                header: 'Response1',
+                message: response,
+                buttons: ['OK']
+            });
+            await alert2.present();
             console.log(response);
             const labels = response.responses[0].labelAnnotations;
+            const alert3 = await this.alertController.create({
+                header: 'Response2',
+                message: labels,
+                buttons: ['OK']
+            });
+            await alert3.present();
             console.log(labels);
         } catch (error) {
             console.log(error);
+            const toast = await this.toastController.create({
+                message: "ERROR VISION: " + error.toString(),
+                duration: 5000,
+                position: 'top',
+                animated: true,
+                color: 'danger'
+            });
+            toast.present();
         }
     }
 }
