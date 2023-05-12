@@ -228,14 +228,12 @@ export class FoodPage implements OnInit {
             console.log(labels);
         } catch (error) {
             console.log(error);
-            const toast = await this.toastController.create({
-                message: "ERROR VISION: " + error.toString(),
-                duration: 5000,
-                position: 'top',
-                animated: true,
-                color: 'danger'
+            const alert4 = await this.alertController.create({
+                header: 'Response',
+                message: "ERROR VISION: " + JSON.stringify(error),
+                buttons: ['OK']
             });
-            toast.present();
+            await alert4.present();
         }
     }
 }
