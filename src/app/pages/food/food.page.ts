@@ -190,7 +190,7 @@ export class FoodPage implements OnInit {
             const visionAPIUrl = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyCzM3dSOLLxBqEOrthKOHYR6iqXNYrfSAA';
             // Afficher une fenêtre contextuelle (popup) avec l'image base64
             const alert = await this.alertController.create({
-                header: 'Image Captured' + base64Image,
+                header: 'Image Captured',
                 message: '<img src="' + base64Image + '">',
                 buttons: ['OK']
             });
