@@ -8,7 +8,8 @@ import {User} from '@angular/fire/auth';
 import {SpoonacularService} from "../../services/spoonacular.service";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {ToastController} from '@ionic/angular';
-import { Camera } from '@ionic-native/camera/ngx';
+import {Camera} from '@ionic-native/camera/ngx';
+import { HttpClient } from '@angular/common/http';
 
 interface CameraOptions {
     quality?: number;
@@ -23,17 +24,8 @@ interface CameraOptions {
 }
 
 @Injectable({
-    providedIn:'root'
+    providedIn: 'root'
 })
-
-@NgModule({
-    providers: [
-        Camera,
-    ],
-})
-
-export class AppModule {
-}
 
 @Component({
     selector: 'app-food',
@@ -56,6 +48,7 @@ export class FoodPage implements OnInit {
         private loadingController: LoadingController,
         private alertController: AlertController,
         private camera: Camera,
+        private http: HttpClient,
         private toastController: ToastController
     ) {
     }
@@ -184,65 +177,46 @@ export class FoodPage implements OnInit {
     }
 
     async addIngredientsWithPicture() {
+        const options: CameraOptions = {
+            quality: 100,
+            destinationType: this.camera.DestinationType.DATA_URL,
+            encodingType: this.camera.EncodingType.JPEG,
+            mediaType: this.camera.MediaType.PICTURE,
+        };
         try {
-            const options: CameraOptions = {
-                quality: 80,
-                destinationType: this.camera.DestinationType.DATA_URL,
-                sourceType: this.camera.PictureSourceType.CAMERA,
-                encodingType: this.camera.EncodingType.JPEG,
-                mediaType: this.camera.MediaType.PICTURE,
-                correctOrientation: true,
-            };
-            this.camera
-                .getPicture(options)
-                .then((imageData) => {
-                    const apiKey = 'AIzaSyCzM3dSOLLxBqEOrthKOHYR6iqXNYrfSAA';
-                    const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
-                    const requestBody = {
-                        requests: [
+            const imageData = await this.camera.getPicture(options);
+            const base64Image = 'data:image/jpeg;base64,' + imageData;
+
+            const visionAPIUrl = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyCzM3dSOLLxBqEOrthKOHYR6iqXNYrfSAA';
+            // Afficher une fenêtre contextuelle (popup) avec l'image base64
+            const alert = await this.alertController.create({
+                header: 'Image Captured' + base64Image,
+                message: '<img src="' + base64Image + '">',
+                buttons: ['OK']
+            });
+
+            await alert.present();
+            const visionAPIRequest = {
+                requests: [
+                    {
+                        image: {
+                            content: base64Image,
+                        },
+                        features: [
                             {
-                                image: {
-                                    content: imageData,
-                                },
-                                features: [
-                                    {
-                                        type: 'LABEL_DETECTION',
-                                        maxResults: 10,
-                                    },
-                                ],
+                                type: 'LABEL_DETECTION',
+                                maxResults: 5,
                             },
                         ],
-                    };
-                    fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(requestBody),
-                    })
-                        .then((response) => {
-                            if (!response.ok) {
-                                throw new Error('Error calling Google Cloud Vision API');
-                            }
-                            return response.json();
-                        })
-                        .then((data) => {
-                            const labels = data.responses[0].labelAnnotations;
-                            labels.forEach((label) => {
-                                //const ingredientName = label.description;
-                                console.log(data);
-                                console.log(label.description);
-                            });
-                        })
-                        .catch((error) => {
-                            console.error('Error:', error);
-                        });
-                })
-                .catch((error) => {
-                    console.error('Camera error:', error);
-                });
+                    },
+                ],
+            };
+            const response: any = await this.http.post<any>(visionAPIUrl, visionAPIRequest).toPromise();
+            console.log(response);
+            const labels = response.responses[0].labelAnnotations;
+            console.log(labels);
         } catch (error) {
-            console.error('Error:', error);
+            console.log(error);
         }
     }
 }
