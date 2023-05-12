@@ -9,7 +9,8 @@ import {SpoonacularService} from "../../services/spoonacular.service";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {ToastController} from '@ionic/angular';
 import {Camera} from '@ionic-native/camera/ngx';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
+import {ActionSheetController} from '@ionic/angular';
 
 interface CameraOptions {
     quality?: number;
@@ -49,6 +50,7 @@ export class FoodPage implements OnInit {
         private alertController: AlertController,
         private camera: Camera,
         private http: HttpClient,
+        private actionSheetController: ActionSheetController,
         private toastController: ToastController
     ) {
     }
@@ -182,58 +184,78 @@ export class FoodPage implements OnInit {
             destinationType: this.camera.DestinationType.DATA_URL,
             encodingType: this.camera.EncodingType.JPEG,
             mediaType: this.camera.MediaType.PICTURE,
+            sourceType: this.camera.PictureSourceType.CAMERA,
         };
+
+        try {
+            const actionSheet = await this.actionSheetController.create({
+                header: 'Select how you want to send your picture',
+                buttons: [
+                    {
+                        text: 'Take a picture with your device',
+                        handler: () => {
+                            options.sourceType = this.camera.PictureSourceType.CAMERA;
+                            this.getPicture(options);
+                        }
+                    },
+                    {
+                        text: 'Select a picture from your library',
+                        handler: () => {
+                            options.sourceType = this.camera.PictureSourceType.PHOTOLIBRARY;
+                            this.getPicture(options);
+                        }
+                    },
+                    {
+                        text: 'Cancel',
+                        role: 'cancel'
+                    }
+                ]
+            });
+            await actionSheet.present();
+        } catch (error) {
+            const alertError = await this.alertController.create({
+                header: 'ERROR',
+                message: JSON.stringify(error),
+                buttons: ['OK'],
+            });
+            await alertError.present();
+        }
+    }
+    async getPicture(options: CameraOptions) {
         try {
             const imageData = await this.camera.getPicture(options);
-            const base64Image = 'data:image/jpeg;base64,' + imageData;
-
             const visionAPIUrl = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyCzM3dSOLLxBqEOrthKOHYR6iqXNYrfSAA';
-            // Afficher une fenêtre contextuelle (popup) avec l'image base64
-            const alert = await this.alertController.create({
-                header: 'Image Captured',
-                message: '<img src="' + base64Image + '">',
-                buttons: ['OK']
-            });
-            await alert.present();
             const visionAPIRequest = {
                 requests: [
                     {
                         image: {
-                            content: base64Image,
+                            content: imageData,
                         },
                         features: [
                             {
                                 type: 'LABEL_DETECTION',
-                                maxResults: 5,
+                                maxResults: 3,
                             },
                         ],
                     },
                 ],
             };
             const response: any = await this.http.post<any>(visionAPIUrl, visionAPIRequest).toPromise();
-            const alert2 = await this.alertController.create({
-                header: 'Response1',
-                message: response,
-                buttons: ['OK']
-            });
-            await alert2.present();
-            console.log(response);
             const labels = response.responses[0].labelAnnotations;
-            const alert3 = await this.alertController.create({
-                header: 'Response2',
-                message: labels,
-                buttons: ['OK']
+            const descriptions = labels.map((label: any) => label.description);
+            const alert = await this.alertController.create({
+                header: 'Food Recognition',
+                message: descriptions.length > 0 ? descriptions.join(', ') : 'No food recognized.',
+                buttons: ['OK'],
             });
-            await alert3.present();
-            console.log(labels);
+            await alert.present();
         } catch (error) {
-            console.log(error);
-            const alert4 = await this.alertController.create({
-                header: 'Response',
-                message: "ERROR VISION: " + JSON.stringify(error),
-                buttons: ['OK']
+            const alertError = await this.alertController.create({
+                header: 'ERROR VISION API',
+                message: JSON.stringify(error),
+                buttons: ['OK'],
             });
-            await alert4.present();
+            await alertError.present();
         }
     }
 }
