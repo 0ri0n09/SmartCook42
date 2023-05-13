@@ -1,16 +1,14 @@
-import {Component, Injectable, NgModule, OnInit} from '@angular/core';
-import {Firestore, deleteDoc, doc, getDocs, collection, addDoc} from '@angular/fire/firestore';
+import {Component, Injectable, OnInit} from '@angular/core';
+import {addDoc, collection, deleteDoc, doc, Firestore, getDocs} from '@angular/fire/firestore';
 import {AuthService} from '../../services/auth.service';
 import {ProfileService} from '../profile/profile.service';
 import {catchError, map} from 'rxjs/operators';
 import {EMPTY} from 'rxjs';
 import {User} from '@angular/fire/auth';
 import {SpoonacularService} from "../../services/spoonacular.service";
-import {AlertController, LoadingController} from "@ionic/angular";
-import {ToastController} from '@ionic/angular';
+import {ActionSheetController, AlertController, LoadingController, ToastController} from "@ionic/angular";
 import {Camera} from '@ionic-native/camera/ngx';
 import {HttpClient} from '@angular/common/http';
-import {ActionSheetController} from '@ionic/angular';
 
 interface CameraOptions {
     quality?: number;
@@ -37,6 +35,7 @@ interface CameraOptions {
 
 export class FoodPage implements OnInit {
     ingredients: any[];
+    allIngredients: any [];
     searchQuery: string;
     searchResults: any[];
     private currentUser: User;
@@ -56,6 +55,7 @@ export class FoodPage implements OnInit {
     }
 
     async ngOnInit() {
+        await this.loadAllIngredients();
         await this.presentLoading();
         this.ingredients = [];
         await this.loadIngredients();
@@ -64,6 +64,15 @@ export class FoodPage implements OnInit {
 
     ionViewDidEnter() {
         this.loadIngredients();
+    }
+
+    async loadAllIngredients(): Promise<any> {
+        try {
+            this.allIngredients = await this.http.get<any>('assets/ingredients.json').toPromise();
+            console.log(this.allIngredients);
+        } catch (error) {
+            console.error('Erreur lors du chargement du fichier JSON', error);
+        }
     }
 
     async presentLoading() {
@@ -221,6 +230,7 @@ export class FoodPage implements OnInit {
             await alertError.present();
         }
     }
+
     async getPicture(options: CameraOptions) {
         try {
             const imageData = await this.camera.getPicture(options);
@@ -234,7 +244,7 @@ export class FoodPage implements OnInit {
                         features: [
                             {
                                 type: 'LABEL_DETECTION',
-                                maxResults: 3,
+                                maxResults: 20,
                             },
                         ],
                     },
