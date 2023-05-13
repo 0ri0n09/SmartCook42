@@ -7,7 +7,7 @@
 
 <ion-content>
     <!-- Search results -->
-    <ion-searchbar [placeholder]="'Search for ingredients 6666...'" [(ngModel)]="searchQuery"
+    <ion-searchbar [placeholder]="'Search for ingredients ...'" [(ngModel)]="searchQuery"
                    (ionChange)="selectIngredients()"></ion-searchbar>
     <ion-grid *ngIf="searchResults && searchResults.length > 0">
         <ion-row>
