@@ -120,6 +120,7 @@ export class FoodPage implements OnInit {
     }
 
     async selectIngredients() {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         await this.presentLoading();
         this.spoonacularService.searchIngredients(this.searchQuery).subscribe(
             async (response: any) => {
