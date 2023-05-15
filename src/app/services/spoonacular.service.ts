@@ -89,4 +89,9 @@ export class SpoonacularService {
     const url = `${this.apiUrl}/recipes/${id}/ingredientWidget.json?apiKey=${this.apiKey}`;
     return this.http.get(url);
   }
+
+  getIngredientInfosbyId(id: number) {
+    const url = `${this.apiUrl}/food/ingredients/${id}/information?amount1&apiKey=${this.apiKey}`;
+    return this.http.get(url);
+  }
 }

@@ -136,7 +136,7 @@ export class FoodPage implements OnInit {
         );
     }
 
-    async addIngredient(ingredientId: string, ingredientName: string, ingredientImage: string) {
+    async addIngredient(ingredientId: number, ingredientName: string, ingredientImage: string) {
         const ingredient = {
             id: ingredientId,
             name: ingredientName,
@@ -233,6 +233,7 @@ export class FoodPage implements OnInit {
 
     async getPicture(options: CameraOptions) {
         try {
+            await this.presentLoading();
             const imageData = await this.camera.getPicture(options);
             const visionAPIUrl = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyCzM3dSOLLxBqEOrthKOHYR6iqXNYrfSAA';
             const visionAPIRequest = {
@@ -252,13 +253,57 @@ export class FoodPage implements OnInit {
             };
             const response: any = await this.http.post<any>(visionAPIUrl, visionAPIRequest).toPromise();
             const labels = response.responses[0].labelAnnotations;
-            const descriptions = labels.map((label: any) => label.description);
-            const alert = await this.alertController.create({
-                header: 'Food Recognition',
-                message: descriptions.length > 0 ? descriptions.join(', ') : 'No food recognized.',
-                buttons: ['OK'],
-            });
-            await alert.present();
+            const descriptions = labels.map((label: any) => label.description.toLowerCase());
+            const jsonListIngredients = await this.http.get<any[]>('/assets/ingredients.json').toPromise();
+            const uniqueIngredients: { [key: string]: boolean } = {};
+            for (const description of descriptions) {
+                const match = jsonListIngredients.find((item) => item.name === description);
+                if (match) {
+                    try {
+                        const response = await this.spoonacularService.getIngredientInfosbyId(match.id).toPromise();
+                        const responseFiltered: {
+                            id: number;
+                            name: string;
+                            image: string;
+                        } = response as {
+                            id: number;
+                            name: string;
+                            image: string;
+                        };
+                        const ingredient = {
+                            id: responseFiltered.id,
+                            name: responseFiltered.name,
+                            image: responseFiltered.image
+                        };
+                        const ingredientKey = JSON.stringify(ingredient);
+                        if (!uniqueIngredients[ingredientKey]) {
+                            uniqueIngredients[ingredientKey] = true;
+                            const existingIngredient = this.ingredients.find((i) => i.id === ingredient.id);
+                            if (!existingIngredient) {
+                                await this.addIngredient(ingredient.id, ingredient.name, ingredient.image);
+                            }
+                        }
+                        const toast = await this.toastController.create({
+                            message: 'The ingredient(s) has been added successfully',
+                            duration: 2000,
+                            position: 'top',
+                            animated: true,
+                            color: 'success'
+                        });
+                        toast.present();
+                    } catch (error) {
+                        console.error('Error getting ingredient:', error);
+                        const alert = await this.alertController.create({
+                            header: 'Error getting ingredient',
+                            message: error,
+                            buttons: ['OK'],
+                        });
+                        await alert.present();
+                    }
+                }
+            }
+            await this.loadIngredients(); // Load ingredients after processing
+            await this.loadingController.dismiss(); // Dismiss loading message
         } catch (error) {
             const alertError = await this.alertController.create({
                 header: 'ERROR VISION API',
