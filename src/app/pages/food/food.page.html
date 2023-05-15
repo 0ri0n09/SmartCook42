@@ -2,12 +2,26 @@
     <ion-toolbar>
         <ion-title>SmartCook</ion-title>
         <script src="cordova.js"></script>
+        <ion-buttons slot="end">
+            <ion-button (click)="addIngredientsWithPicture()" color="success">
+                <ion-icon name="camera-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
+<ion-list>
+    <div class="favorite-header">
+        <ion-list>
+            <ion-list-header class="favorite-header-title">My fridge ingredients</ion-list-header>
+            <ion-list class="ion-align-items-center" style="margin-top: 3px">Search, fill and see what is in your fridge</ion-list>
+        </ion-list>
+    </div>
+</ion-list>
+
 <ion-content>
     <!-- Search results -->
-    <ion-searchbar [placeholder]="'Search for ingredients ...'" [(ngModel)]="searchQuery"
+    <ion-searchbar [placeholder]="'Search for ingredients...'" [(ngModel)]="searchQuery"
                    (ionChange)="selectIngredients()"></ion-searchbar>
     <ion-grid *ngIf="searchResults && searchResults.length > 0">
         <ion-row>
@@ -29,18 +43,7 @@
             </ion-col>
         </ion-row>
     </ion-grid>
-    <!-- Ingredients in the fridge -->
 
-    <div class="favorite-header">
-        <ion-list>
-            <ion-list-header class="favorite-header-title">My fridge ingredients</ion-list-header>
-        </ion-list>
-    </div>
-    <div class="icon-container ion-align-items-center">
-        <ion-button (click)="addIngredientsWithPicture()" color="success">
-            Add ingredients with a picture
-        </ion-button>
-    </div>
     <ion-grid *ngIf="ingredients && ingredients.length > 0; else emptyFridge">
         <ion-row>
             <ion-col size="6" *ngFor="let ingredient of ingredients">
@@ -53,9 +56,24 @@
                                  [src]=ingredient.image
                                  alt="No picture found for this ingredient"></ion-img>
                     </ion-card-content>
-                    <ion-button class="add-button" color="danger" (click)="deleteIngredient(ingredient.id)">
-                        <ion-icon name="trash"></ion-icon>
-                    </ion-button>
+                    <ion-grid>
+                        <ion-row>
+                            <ion-col size="6" class="icon-col">
+                                <div class="icon-container">
+                                    <ion-button class="add-button" color="secondary" (click)="saveToShoppingList(ingredient)">
+                                        <ion-icon name="cart"></ion-icon>
+                                    </ion-button>
+                                </div>
+                            </ion-col>
+                            <ion-col size="6" class="icon-col">
+                                <div class="icon-container">
+                                    <ion-button class="add-button" color="danger" (click)="deleteIngredient(ingredient.id)">
+                                        <ion-icon name="trash"></ion-icon>
+                                    </ion-button>
+                                </div>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
                 </ion-card>
             </ion-col>
         </ion-row>
