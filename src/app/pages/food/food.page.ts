@@ -261,6 +261,7 @@ export class FoodPage implements OnInit {
             const descriptions = labels.map((label: any) => label.description.toLowerCase());
             const jsonListIngredients = await this.http.get<any[]>('/assets/ingredients.json').toPromise();
             const uniqueIngredients: { [key: string]: boolean } = {};
+            let ingredientFound = false;
             for (const description of descriptions) {
                 const match = jsonListIngredients.find((item) => item.name === description);
                 if (match) {
@@ -275,6 +276,7 @@ export class FoodPage implements OnInit {
                             name: string;
                             image: string;
                         };
+                        ingredientFound = true;
                         const ingredient = {
                             id: responseFiltered.id,
                             name: responseFiltered.name,
@@ -288,14 +290,6 @@ export class FoodPage implements OnInit {
                                 await this.addIngredient(ingredient.id, ingredient.name, ingredient.image);
                             }
                         }
-                        const toast = await this.toastController.create({
-                            message: 'The ingredient(s) has been added successfully',
-                            duration: 2000,
-                            position: 'top',
-                            animated: true,
-                            color: 'success'
-                        });
-                        toast.present();
                     } catch (error) {
                         console.error('Error getting ingredient:', error);
                         const alert = await this.alertController.create({
@@ -306,16 +300,25 @@ export class FoodPage implements OnInit {
                         await alert.present();
                     }
                 }
-                else {
-                    const toast = await this.toastController.create({
-                        message: 'No ingredient(s) found in the picture',
-                        duration: 2000,
-                        position: 'top',
-                        animated: true,
-                        color: 'danger'
-                    });
-                    toast.present();
-                }
+            }
+            if (ingredientFound) {
+                const toast = await this.toastController.create({
+                    message: 'The ingredient(s) has been added successfully',
+                    duration: 2000,
+                    position: 'top',
+                    animated: true,
+                    color: 'success'
+                });
+                toast.present();
+            } else {
+                const toast = await this.toastController.create({
+                    message: 'No ingredient(s) found in the picture',
+                    duration: 2000,
+                    position: 'top',
+                    animated: true,
+                    color: 'danger'
+                });
+                toast.present();
             }
             await this.loadIngredients();
             await this.loadingController.dismiss();
