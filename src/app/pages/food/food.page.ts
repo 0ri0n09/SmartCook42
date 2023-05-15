@@ -83,8 +83,16 @@ export class FoodPage implements OnInit {
         await this.loadingController.dismiss();
     }
 
-    saveToShoppingList(ingredient) {
+    async saveToShoppingList(ingredient) {
         this.listService.addToShoppingList(ingredient);
+        const toast = await this.toastController.create({
+            message: 'The ingredient has been added successfully',
+            duration: 2000,
+            position: 'top',
+            animated: true,
+            color: 'success'
+        });
+        toast.present();
     }
 
     ionViewDidEnter() {
