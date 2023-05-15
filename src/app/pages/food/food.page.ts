@@ -306,9 +306,19 @@ export class FoodPage implements OnInit {
                         await alert.present();
                     }
                 }
+                else {
+                    const toast = await this.toastController.create({
+                        message: 'No ingredient(s) found in the picture',
+                        duration: 2000,
+                        position: 'top',
+                        animated: true,
+                        color: 'danger'
+                    });
+                    toast.present();
+                }
             }
-            await this.loadIngredients(); // Load ingredients after processing
-            await this.loadingController.dismiss(); // Dismiss loading message
+            await this.loadIngredients();
+            await this.loadingController.dismiss();
         } catch (error) {
             const alertError = await this.alertController.create({
                 header: 'ERROR VISION API',
