@@ -1,9 +1,22 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>chatBot</ion-title>
+    <ion-title>SmartCook</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-<p>test</p>
+  <div class="conversation-window">
+    <div *ngFor="let message of chatMessages" class="message-wrapper">
+      <div [ngClass]="{'user-message': message.isUser, 'bot-message': !message.isUser}">
+        {{ message.content }}
+      </div>
+    </div>
+  </div>
+
+  <ion-footer>
+    <ion-toolbar>
+      <ion-input [(ngModel)]="userInput" placeholder="Type your message"></ion-input>
+      <ion-button (click)="sendMessage()" expand="block">Send</ion-button>
+    </ion-toolbar>
+  </ion-footer>
 </ion-content>

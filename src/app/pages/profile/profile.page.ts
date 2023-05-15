@@ -2,11 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { UserProfile } from 'src/app/models/user';
-import { ProfileService } from './profile.service';
 import { Observable, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { ProfileStore } from './profile.store';
+import { UserProfile } from 'src/app/models/user';
+import { ProfileService } from './profile.service';
 import { ToastController } from '@ionic/angular';
 
 @Component({
