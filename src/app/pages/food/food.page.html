@@ -3,7 +3,7 @@
         <ion-title>SmartCook</ion-title>
         <script src="cordova.js"></script>
         <ion-buttons slot="end">
-            <ion-button (click)="addIngredientsWithPicture()" color="success">
+            <ion-button color="success" [disabled]="!isNativeApp()" (click)="isNativeApp() ? addIngredientsWithPicture() : showFeatureNotAvailableAlert()">
                 <ion-icon name="camera-outline"></ion-icon>
             </ion-button>
         </ion-buttons>
@@ -17,19 +17,19 @@
             <ion-list class="ion-align-items-center" style="margin-top: 3px">Search, fill and see what's in your fridge</ion-list>
         </ion-list>
     </div>
-</ion-list>
-
-<ion-content>
     <!-- Search with fridge ingredients -->
     <div class="centered-button-container">
         <ion-button class="search-button" color="primary" (click)="searchRecipesWithFridgeIngredients()">
             <ion-icon name="fast-food"></ion-icon>
-            Search a recipe with my ingredients
+            Search recipes with my ingredients
         </ion-button>
     </div>
-    <!-- Search results -->
     <ion-searchbar [placeholder]="'Search for ingredients...'" [(ngModel)]="searchQuery"
                    (ionChange)="selectIngredients()"></ion-searchbar>
+</ion-list>
+
+<ion-content>
+    <!-- Search results -->
     <ion-grid *ngIf="searchResults && searchResults.length > 0">
         <ion-row>
             <ion-col size="6" *ngFor="let result of searchResults">

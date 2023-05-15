@@ -11,6 +11,8 @@ import {Camera} from '@ionic-native/camera/ngx';
 import {HttpClient} from '@angular/common/http';
 import {ListService} from "../../services/list.service";
 import { Router, ActivatedRoute } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { Inject } from '@angular/core';
 
 interface CameraOptions {
     quality?: number;
@@ -55,8 +57,22 @@ export class FoodPage implements OnInit {
         private toastController: ToastController,
         private listService: ListService,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        @Inject(Platform) private platform: Platform
     ) {
+    }
+
+    async showFeatureNotAvailableAlert() {
+        const alert = await this.alertController.create({
+            header: 'Not Available',
+            message: 'Feature only available on the native application',
+            buttons: ['OK']
+        });
+        await alert.present();
+    }
+
+    isNativeApp(): boolean {
+        return this.platform.is('cordova');
     }
 
     async ngOnInit() {
