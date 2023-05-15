@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -93,5 +94,10 @@ export class SpoonacularService {
   getIngredientInfosbyId(id: number) {
     const url = `${this.apiUrl}/food/ingredients/${id}/information?amount1&apiKey=${this.apiKey}`;
     return this.http.get(url);
+  }
+
+  sendChatMessage(message: string): Observable<any> {
+    const url = `https://api.spoonacular.com/food/converse?apiKey=${this.apiKey}&text=${encodeURIComponent(message)}`;
+    return this.http.post<any>(url, {});
   }
 }

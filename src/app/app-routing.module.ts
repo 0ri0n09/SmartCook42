@@ -57,7 +57,11 @@ const routes: Routes = [
     path: 'favorites',
     loadChildren: () => import('./pages/favorites/favorites.module').then( m => m.FavoritesPageModule),
     canActivate: [AuthGuard]
+  },  {
+    path: 'chat-bot',
+    loadChildren: () => import('./pages/chat-bot/chat-bot.module').then( m => m.ChatBotPageModule)
   }
+
 ];
 
 @NgModule({
