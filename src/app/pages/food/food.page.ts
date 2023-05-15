@@ -9,6 +9,7 @@ import {SpoonacularService} from "../../services/spoonacular.service";
 import {ActionSheetController, AlertController, LoadingController, ToastController} from "@ionic/angular";
 import {Camera} from '@ionic-native/camera/ngx';
 import {HttpClient} from '@angular/common/http';
+import {ListService} from "../../services/list.service";
 
 interface CameraOptions {
     quality?: number;
@@ -50,7 +51,8 @@ export class FoodPage implements OnInit {
         private camera: Camera,
         private http: HttpClient,
         private actionSheetController: ActionSheetController,
-        private toastController: ToastController
+        private toastController: ToastController,
+        private listService: ListService,
     ) {
     }
 
@@ -62,6 +64,10 @@ export class FoodPage implements OnInit {
         await this.loadingController.dismiss();
     }
 
+    saveToShoppingList(ingredient) {
+        this.listService.addToShoppingList(ingredient);
+    }
+
     ionViewDidEnter() {
         this.loadIngredients();
     }
@@ -69,9 +75,8 @@ export class FoodPage implements OnInit {
     async loadAllIngredients(): Promise<any> {
         try {
             this.allIngredients = await this.http.get<any>('assets/ingredients.json').toPromise();
-            console.log(this.allIngredients);
         } catch (error) {
-            console.error('Erreur lors du chargement du fichier JSON', error);
+            console.error(error);
         }
     }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ListItem } from '../../models/list-item';
 import { ListService } from '../../services/list.service';
-import { AlertController } from '@ionic/angular';
+import { ToastController} from '@ionic/angular';
+import {User} from "@angular/fire/auth";
 
 @Component({
   selector: 'app-list',
@@ -9,56 +9,35 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['./list.page.scss'],
 })
 export class ListPage implements OnInit {
-  shoppingList: ListItem[];
-  newItemName: string;
-  newItemQuantity: number;
+  ingredients: any;
+  searchQuery: string;
+  searchResults: any[];
 
   constructor(private listService: ListService,
-              private alertController: AlertController) {
+              private toastController: ToastController){}
+
+  ngOnInit() {
+    this.ingredients = this.listService.getShoppingList();
+  }
+
+  ionViewDidEnter() {
     this.loadShoppingList();
   }
 
-  ngOnInit() {}
-
-  loadShoppingList(): void {
-    this.shoppingList = this.listService.getShoppingList();
+  loadShoppingList() {
+    this.ingredients = this.listService.getShoppingList();
   }
 
-  addItem(item: ListItem): void {
-    this.listService.addItem(item);
-    this.loadShoppingList();
-  }
-
-  updateItem(item: ListItem): void {
-    this.listService.updateItem(item);
-    this.loadShoppingList();
-  }
-
-  deleteItem(itemId: string): void {
-    this.listService.deleteItem(itemId);
-    this.loadShoppingList();
-  }
-
-  async addNewItem(name: string, quantity: number): Promise<void> {
-    if (!name || !quantity) {
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'A product must have a name and a quantity.',
-        buttons: ['OK'],
-      });
-
-      await alert.present();
-      return;
-    }
-
-    const newItem: ListItem = {
-      id: Date.now().toString(),
-      name: name,
-      quantity: quantity,
-      isChecked: false,
-    };
-    this.addItem(newItem);
-    this.newItemName = '';
-    this.newItemQuantity = null;
+  async deleteFromShoppingList(ingredientId: string) {
+    this.listService.deleteOfShoppingList(ingredientId);
+    this.ingredients = this.listService.getShoppingList();
+    const toast = await this.toastController.create({
+      message: 'The ingredient has been removed successfully',
+      duration: 2000,
+      position: 'top',
+      animated: true,
+      color: 'danger'
+    });
+    toast.present();
   }
 }
