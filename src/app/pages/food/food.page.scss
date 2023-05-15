@@ -43,3 +43,17 @@
   width: 100%;
   margin-top: 2px;
 }
+
+.centered-button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.search-button {
+  display: flex;
+  align-items: center;
+}
+
+.search-button ion-icon {
+  margin-right: 10px;
+}

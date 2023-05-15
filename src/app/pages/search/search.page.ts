@@ -4,6 +4,7 @@ import {FavoritesService} from "../../services/favorites.service";
 import {LoadingController, ToastController} from "@ionic/angular";
 import {debounceTime} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
 @Component({
     selector: 'app-search',
     templateUrl: './search.page.html',
@@ -29,9 +30,19 @@ export class SearchPage implements OnInit {
     constructor(private spoonacularService: SpoonacularService,
                 private favoritesService: FavoritesService,
                 private toastController: ToastController,
-                private loadingController: LoadingController) {
+                private loadingController: LoadingController,
+                private router: Router,
+                private route: ActivatedRoute) {
     }
     ngOnInit() {
+        this.searchQuery = '';
+        this.searchQuery$.next(this.searchQuery);
+        this.route.queryParams.subscribe(params => {
+            if (params.ingredients && params.commingFromFoodPage === 'true') {
+                const ingredients = JSON.parse(params.ingredients);
+                this.searchQuery = ingredients.join(' ');
+            }
+        });
         this.searchQuery$
             .pipe(debounceTime(750))
             .subscribe(() => {

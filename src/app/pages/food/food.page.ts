@@ -10,6 +10,7 @@ import {ActionSheetController, AlertController, LoadingController, ToastControll
 import {Camera} from '@ionic-native/camera/ngx';
 import {HttpClient} from '@angular/common/http';
 import {ListService} from "../../services/list.service";
+import { Router, ActivatedRoute } from '@angular/router';
 
 interface CameraOptions {
     quality?: number;
@@ -53,6 +54,8 @@ export class FoodPage implements OnInit {
         private actionSheetController: ActionSheetController,
         private toastController: ToastController,
         private listService: ListService,
+        private router: Router,
+        private route: ActivatedRoute
     ) {
     }
 
@@ -120,7 +123,7 @@ export class FoodPage implements OnInit {
     }
 
     async selectIngredients() {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1400));
         await this.presentLoading();
         this.spoonacularService.searchIngredients(this.searchQuery).subscribe(
             async (response: any) => {
@@ -335,5 +338,11 @@ export class FoodPage implements OnInit {
 
     isInShoppingList(ingredientId: any): boolean {
         return this.listService.isInShoppingList(ingredientId);
+    }
+
+    searchRecipesWithFridgeIngredients() {
+        const ingredientNames = this.ingredients.map(ingredient => ingredient.name);
+        const ingredients = JSON.stringify(ingredientNames);
+        this.router.navigate(['/search'], { queryParams: { ingredients: ingredients, commingFromFoodPage: true } });
     }
 }
