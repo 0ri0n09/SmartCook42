@@ -1,19 +1,19 @@
-import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
-import {SpoonacularService} from "../../services/spoonacular.service";
-import {FavoritesService} from "../../services/favorites.service";
-import {LoadingController, ToastController} from "@ionic/angular";
-import {debounceTime} from 'rxjs/operators';
-import {Subject} from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
+import {Component, OnInit } from '@angular/core';
+import { SpoonacularService } from "../../services/spoonacular.service";
+import { FavoritesService } from "../../services/favorites.service";
+import { LoadingController, ToastController} from "@ionic/angular";
+import { Subject } from 'rxjs';
+import {ActivatedRoute} from "@angular/router";
+
 @Component({
     selector: 'app-search',
     templateUrl: './search.page.html',
     styleUrls: ['./search.page.scss'],
 })
 export class SearchPage implements OnInit {
-    @ViewChild('searchBar', {static: true}) searchBar: ElementRef;
-    searchQuery$: Subject<string> = new Subject<string>();
     searchQuery: string;
+    searchIngredients: string;
+    searchIngredients$: Subject<string> = new Subject<string>();
     recipes: any[];
     diets = ['Vegan', 'Vegetarian', 'Paleo', 'Ketogenic', 'Gluten Free'];
     cuisines = [
@@ -27,28 +27,68 @@ export class SearchPage implements OnInit {
     selectedType: string;
     selectedIntolerances: string[] = [];
     selectedOccasion: string;
+    view = 'view2';
+
     constructor(private spoonacularService: SpoonacularService,
                 private favoritesService: FavoritesService,
                 private toastController: ToastController,
                 private loadingController: LoadingController,
-                private router: Router,
-                private route: ActivatedRoute) {
+                private activatedRoute: ActivatedRoute) {
     }
+
     ngOnInit() {
-        this.searchQuery = '';
-        this.searchQuery$.next(this.searchQuery);
-        this.route.queryParams.subscribe(params => {
-            if (params.ingredients && params.commingFromFoodPage === 'true') {
-                const ingredients = JSON.parse(params.ingredients);
-                this.searchQuery = ingredients.join(' ');
+        this.searchIngredients$.pipe(
+        ).subscribe((query) => {
+            this.searchRecipesByIngredients(query);
+        });
+
+        this.activatedRoute.queryParams.subscribe(params => {
+            if (params.searchIngredients) {
+                const ingredients = JSON.parse(params.searchIngredients);
+                this.searchIngredients = ingredients.join(' ');
+                this.searchIngredients$.next(this.searchIngredients);
+                this.searchRecipesByIngredients(this.searchIngredients);
             }
         });
-        this.searchQuery$
-            .pipe(debounceTime(750))
-            .subscribe(() => {
-                this.searchRecipes();
-            });
     }
+
+    toggleContent() {
+        this.view = this.view === 'view1' ? 'view2' : 'view1';
+    }
+
+    async searchRecipesByIngredients(ingredients: string) {
+        const loading = await this.presentLoading();
+        this.spoonacularService.searchRecipesByIngredients(ingredients)
+            .subscribe(
+                async (response: any) => {
+                    this.recipes = response;
+                    await loading.dismiss();
+                    if (this.recipes.length === 0) {
+                        const toast = await this.toastController.create({
+                            message: 'No recipes found with these ingredients',
+                            duration: 2000,
+                            position: 'top',
+                            animated: true,
+                            color: 'danger'
+                        });
+                        toast.present();
+                    }
+                },
+                async (error) => {
+                    console.log('Error searching recipes:', error);
+                    await loading.dismiss();
+                }
+            );
+    }
+
+    async presentLoading() {
+        const loading = await this.loadingController.create({
+            message: 'Loading recipes...'
+        });
+        await loading.present();
+        return loading;
+    }
+
     async searchRecipes() {
         await this.presentLoading();
         const intolerances = this.selectedIntolerances.join(',');
@@ -64,7 +104,7 @@ export class SearchPage implements OnInit {
             async (response: any) => {
                 this.recipes = response.results;
                 await this.loadingController.dismiss();
-                if(this.recipes.length === 0) {
+                if (this.recipes.length === 0) {
                     const toast = await this.toastController.create({
                         message: 'No recipes found with this search',
                         duration: 2000,
@@ -81,13 +121,7 @@ export class SearchPage implements OnInit {
             }
         );
     }
-    async presentLoading() {
-        const loading = await this.loadingController.create({
-            message: 'Loading recipes...'
-        });
-        await loading.present();
-        return loading;
-    }
+
     async clearFilter(filter: string) {
         switch (filter) {
             case 'diet':
@@ -113,13 +147,17 @@ export class SearchPage implements OnInit {
         }
         this.searchRecipes();
     }
-    isFavorite(recipe): boolean {
+
+    isFavorite(recipe: any): boolean {
         return this.favoritesService.isFavorite(recipe.id);
     }
+
     async toggleFavorite(recipe: any) {
         const isFavorite = this.favoritesService.isFavorite(recipe.id);
         if (isFavorite) {
+            // Remove from favorites
         } else {
+            // Add to favorites
             await this.favoritesService.addToFavorites(recipe);
             const toast = await this.toastController.create({
                 message: 'Recipe added to favorites',

@@ -81,6 +81,14 @@ export class FoodPage implements OnInit {
         this.ingredients = [];
         await this.loadIngredients();
         await this.loadingController.dismiss();
+        this.ingredients = this.ingredients.map(ingredient => ({
+            ...ingredient,
+            isSelected: false
+        }));
+    }
+
+    selectIngredient(ingredient) {
+        ingredient.isSelected = !ingredient.isSelected;
     }
 
     async saveToShoppingList(ingredient) {
@@ -105,6 +113,10 @@ export class FoodPage implements OnInit {
         } catch (error) {
             console.error(error);
         }
+    }
+
+    anyIngredientSelected(): boolean {
+        return this.ingredients && this.ingredients.some(ingredient => ingredient.isSelected);
     }
 
     async presentLoading() {
@@ -365,8 +377,9 @@ export class FoodPage implements OnInit {
     }
 
     searchRecipesWithFridgeIngredients() {
-        const ingredientNames = this.ingredients.map(ingredient => ingredient.name);
+        const selectedIngredients = this.ingredients.filter(ingredient => ingredient.isSelected);
+        const ingredientNames = selectedIngredients.map(ingredient => ingredient.name);
         const ingredients = JSON.stringify(ingredientNames);
-        this.router.navigate(['/search'], { queryParams: { ingredients: ingredients, commingFromFoodPage: true } });
+        this.router.navigate(['/search'], { queryParams: { searchIngredients: ingredients } });
     }
 }

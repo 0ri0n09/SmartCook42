@@ -36,11 +36,6 @@ export class SpoonacularService {
     return this.http.get(url);
   }
 
-  autocompleteRecipeSearch(query: string, number: number = 10) {
-    const url = `${this.apiUrl}/recipes/autocomplete?apiKey=${this.apiKey}&query=${query}&number=${number}`;
-    return this.http.get(url);
-  }
-
   getRecipeDetailsById(id: number) {
     const url = `${this.apiUrl}/recipes/${id}/information?apiKey=${this.apiKey}`;
     return this.http.get(url);
@@ -56,38 +51,8 @@ export class SpoonacularService {
     return this.http.get(url);
   }
 
-  searchRecipesByCuisine(cuisine: string, number: number = 10) {
-    const url = `${this.apiUrl}/recipes/complexSearch?apiKey=${this.apiKey}&cuisine=${cuisine}&number=${number}`;
-    return this.http.get(url);
-  }
-
-  searchRecipesByDiet(diet: string, number: number = 10) {
-    const url = `${this.apiUrl}/recipes/complexSearch?apiKey=${this.apiKey}&diet=${diet}&number=${number}`;
-    return this.http.get(url);
-  }
-
-  searchRecipesByType(type: string, number: number = 10) {
-    const url = `${this.apiUrl}/recipes/complexSearch?apiKey=${this.apiKey}&type=${type}&number=${number}`;
-    return this.http.get(url);
-  }
-
-  searchRecipesByOccasion(occasion: string, number: number = 10) {
-    const url = `${this.apiUrl}/recipes/complexSearch?apiKey=${this.apiKey}&occasion=${occasion}&number=${number}`;
-    return this.http.get(url);
-  }
-
-  searchRecipesByIntolerances(intolerances: string, number: number = 10) {
-    const url = `${this.apiUrl}/recipes/complexSearch?apiKey=${this.apiKey}&intolerances=${intolerances}&number=${number}`;
-    return this.http.get(url);
-  }
-
   getSimilarRecipesById(id: number, number: number = 10) {
     const url = `${this.apiUrl}/recipes/${id}/similar?apiKey=${this.apiKey}&number=${number}`;
-    return this.http.get(url);
-  }
-
-  getRecipeIngredientById(id: number) {
-    const url = `${this.apiUrl}/recipes/${id}/ingredientWidget.json?apiKey=${this.apiKey}`;
     return this.http.get(url);
   }
 
