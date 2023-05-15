@@ -19,6 +19,11 @@ export class ListService {
     localStorage.setItem('shoppingList', JSON.stringify(list));
   }
 
+  isInShoppingList(ingredientId: number) {
+    const favorites = this.getShoppingList();
+    return favorites.some(ingredient => ingredient.id === ingredientId);
+  }
+
   deleteOfShoppingList(itemId: string): void {
     const list = this.getShoppingList();
     const newList = list.filter(item => item.id !== itemId);

@@ -328,4 +328,8 @@ export class FoodPage implements OnInit {
             await alertError.present();
         }
     }
+
+    isInShoppingList(ingredientId: any): boolean {
+        return this.listService.isInShoppingList(ingredientId);
+    }
 }
