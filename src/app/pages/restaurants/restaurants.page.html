@@ -1,76 +1,88 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>SmartCook</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>SmartCook</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-list>
-  <div class="favorite-header">
-    <ion-list>
-      <ion-list-header class="favorite-header-title">Find restaurants near you</ion-list-header>
-    </ion-list>
-  </div>
-  <div class="centered-button-container">
-    <ion-button class="search-button" color="primary" (click)="getRestaurants()">
-      <ion-icon style="margin-right: 5px" name="restaurant"></ion-icon>
-      Search restaurants
-    </ion-button>
-  </div>
-  <!-- Cuisine filter-->
-  <ion-searchbar [placeholder]="'Search by cuisine (french, italian...)'"
-                 [(ngModel)]="cuisine"
-                 (ionClear)="clearSearch()">
-  </ion-searchbar>
+    <div class="favorite-header">
+        <ion-list>
+            <ion-list-header class="favorite-header-title">Find restaurants near you</ion-list-header>
+        </ion-list>
+    </div>
+    <div class="centered-button-container">
+        <ion-button class="search-button" color="primary" (click)="getRestaurants()">
+            <ion-icon style="margin-right: 5px" name="restaurant"></ion-icon>
+            Search restaurants
+        </ion-button>
+    </div>
+    <!-- Cuisine filter-->
+    <ion-searchbar [placeholder]="'Search by cuisine (french, italian...)'"
+                   [(ngModel)]="cuisine"
+                   (ionClear)="clearSearch()">
+    </ion-searchbar>
 </ion-list>
 
 <!-- Search results -->
 <ion-content>
-  <ion-list *ngIf="restaurants && restaurants.length > 0">
-    <ng-container *ngFor="let restaurant of restaurants">
-      <ion-card class="restaurant-card">
-        <ion-card-header>
-          <ion-card-title (click)="openGoogleMap(restaurant)"><strong>{{ restaurant.name.toUpperCase() }}</strong> <ion-icon class="ion-margin-horizontal" name="locate" color="primary"></ion-icon></ion-card-title>
-          <ion-img [src]="restaurant.food_photos[0]" alt="No picture for this restaurant" class="restaurant-image" style="margin-top: 10px"></ion-img>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-grid>
-            <ion-row (click)="callPhoneNumber(restaurant.phone_number)">
-              <ion-col size="2">
-                <ion-icon name="call" size="large" color="success"></ion-icon>
-              </ion-col>
-              <ion-col size="10">
-                <ion-button class="phone-row" fill="clear">
-                  <p class="text-large" style="color: white">+{{ restaurant.phone_number }}</p>
-                </ion-button>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="2">
-                <ion-icon [name]="restaurant.delivery_enabled ? 'car-sport' : 'close'" size="large" color="primary"></ion-icon>
-              </ion-col>
-              <ion-col size="10">
-                <p class="text-large">Delivery: {{ restaurant.delivery_enabled ? 'Available' : 'Not available' }}</p>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="2">
-                <ion-icon [name]="restaurant.pickup_enabled ? 'briefcase' : 'close'" size="large" color="primary"></ion-icon>
-              </ion-col>
-              <ion-col size="10">
-                <p class="text-large">Pickup: {{ restaurant.pickup_enabled ? 'Available' : 'Not available' }}</p>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="2">
-                <ion-icon name="star" size="large" color="warning"></ion-icon>
-              </ion-col>
-              <ion-col size="10">
-                <p class="text-large" style="color: #F0C300">Rating: {{ restaurant.aggregated_rating_count }}</p>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </ion-card-content>
-      </ion-card>
-    </ng-container>
-  </ion-list>
+    <ion-list *ngIf="restaurants && restaurants.length > 0">
+        <ng-container *ngFor="let restaurant of restaurants">
+            <ion-card class="restaurant-card custom-card-margin">
+                <ion-card-header class="card-header">
+                    <div class="header-content">
+                        <ion-card-title class="card-title" (click)="openGoogleMap(restaurant)">
+                            <strong>{{ restaurant.name.toUpperCase() }}</strong>
+                            <p>{{ restaurant.is_open ? '(Open)' : '(Closed)' }}</p>
+                            <ion-icon class="ion-margin-horizontal" name="locate" size="large" color="primary"></ion-icon>
+                        </ion-card-title>
+                    </div>
+                </ion-card-header>
+                <ion-card-content>
+                    <ion-img [src]="restaurant.food_photos[0]" alt="No picture for this restaurant"
+                             class="restaurant-image rounded-image"></ion-img>
+                    <ion-grid>
+                        <ion-row (click)="callPhoneNumber(restaurant.phone_number)">
+                            <ion-col size="2">
+                                <ion-icon name="call" size="large" color="success"></ion-icon>
+                            </ion-col>
+                            <ion-col size="10">
+                                <ion-button class="phone-row" fill="clear">
+                                    <p class="text-large" style="color: white">+{{ restaurant.phone_number }}</p>
+                                </ion-button>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row>
+                            <ion-col size="2">
+                                <ion-icon [name]="restaurant.delivery_enabled ? 'car-sport' : 'close'" size="large"
+                                          color="primary"></ion-icon>
+                            </ion-col>
+                            <ion-col size="10">
+                                <p class="text-large">
+                                    Delivery: {{ restaurant.delivery_enabled ? 'Available' : 'Not available' }}</p>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row>
+                            <ion-col size="2">
+                                <ion-icon [name]="restaurant.pickup_enabled ? 'briefcase' : 'close'" size="large"
+                                          color="primary"></ion-icon>
+                            </ion-col>
+                            <ion-col size="10">
+                                <p class="text-large">
+                                    Pickup: {{ restaurant.pickup_enabled ? 'Available' : 'Not available' }}</p>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row>
+                            <ion-col size="2">
+                                <ion-icon name="star" size="large" color="warning"></ion-icon>
+                            </ion-col>
+                            <ion-col size="10">
+                                <p class="text-large" style="color: #F0C300">
+                                    Rating: {{ restaurant.aggregated_rating_count }}</p>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                </ion-card-content>
+            </ion-card>
+        </ng-container>
+    </ion-list>
 </ion-content>

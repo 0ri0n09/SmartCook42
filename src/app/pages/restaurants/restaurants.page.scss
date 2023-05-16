@@ -21,3 +21,28 @@
   background-color: #0ec254;
   border-radius: 10px;
 }
+
+.card-header {
+  display: flex;
+  align-items: center;
+}
+
+.header-content {
+  flex-grow: 1;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rounded-image {
+  border-radius: 10px;
+}
+
+.restaurant-card {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+

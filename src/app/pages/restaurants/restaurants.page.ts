@@ -130,10 +130,10 @@ export class RestaurantsPage implements OnInit {
     }
     async callPhoneNumber(phoneNumber: number) {
         if (this.platform.is('cordova')) {
-            window.location.href = `tel:${phoneNumber}`;
+            window.location.href = `tel:`+`+`+`${phoneNumber}`;
         } else {
             const toast = await this.toastController.create({
-                message: "Feature only on smartphone devices",
+                message: "Feature only on smartphone",
                 duration: 2000,
                 position: 'top',
                 animated: true,
