@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {SpoonacularService} from "../../services/spoonacular.service";
-import {LoadingController, ToastController} from "@ionic/angular";
+import {LoadingController, Platform, ToastController} from "@ionic/angular";
 
 interface Restaurant {
     offers_third_party_delivery: boolean;
@@ -54,6 +54,7 @@ export class RestaurantsPage implements OnInit {
         private spoonacularService: SpoonacularService,
         private loadingController: LoadingController,
         private toastController: ToastController,
+        private platform: Platform,
     ) {
     }
 
@@ -126,5 +127,19 @@ export class RestaurantsPage implements OnInit {
         const address = encodeURIComponent(`${restaurant.address.street_addr}, ${restaurant.address.city}, ${restaurant.address.country}`);
         const url = `https://www.google.com/maps/search/?api=1&query=${address}`;
         window.open(url, '_blank');
+    }
+    async callPhoneNumber(phoneNumber: number) {
+        if (this.platform.is('cordova')) {
+            window.location.href = `tel:${phoneNumber}`;
+        } else {
+            const toast = await this.toastController.create({
+                message: "Feature only on smartphone devices",
+                duration: 2000,
+                position: 'top',
+                animated: true,
+                color: 'danger'
+            });
+            await toast.present();
+        }
     }
 }
