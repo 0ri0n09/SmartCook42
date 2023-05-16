@@ -89,7 +89,6 @@ export class RestaurantsPage implements OnInit {
             console.log("Geolocation is not supported by this browser.");
         }
     }
-
     async getRestaurants() {
         await this.presentLoading();
         this.spoonacularService.getRestaurants(
@@ -123,11 +122,9 @@ export class RestaurantsPage implements OnInit {
             }
         );
     }
-
-    openGoogleMap(restaurant: any) {
-        const latitude = restaurant.address.latitude;
-        const longitude = restaurant.address.longitude;
-        const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+    openGoogleMap(restaurant) {
+        const address = encodeURIComponent(`${restaurant.address.street_addr}, ${restaurant.address.city}, ${restaurant.address.country}`);
+        const url = `https://www.google.com/maps/search/?api=1&query=${address}`;
         window.open(url, '_blank');
     }
 }
