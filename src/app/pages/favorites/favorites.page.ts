@@ -8,7 +8,6 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['./favorites.page.scss'],
 })
 export class FavoritesPage implements OnInit {
-
   favoriteRecipes: any[] = [];
 
   constructor(

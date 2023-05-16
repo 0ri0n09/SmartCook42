@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.smartcook42',
-  appName: 'AuthStarterAngularFire',
+  appName: 'SmartCook42',
   webDir: 'www',
   server: {
     androidScheme: 'https'

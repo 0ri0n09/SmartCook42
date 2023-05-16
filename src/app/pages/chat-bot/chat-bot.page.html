@@ -4,7 +4,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="content-wrapper">
   <div class="conversation-window">
     <div *ngFor="let message of chatMessages" class="message-wrapper">
       <div [ngClass]="{'user-message': message.isUser, 'bot-message': !message.isUser}">
@@ -12,11 +12,11 @@
       </div>
     </div>
   </div>
-
-  <ion-footer>
-    <ion-toolbar>
-      <ion-input [(ngModel)]="userInput" placeholder="Type your message"></ion-input>
-      <ion-button (click)="sendMessage()" expand="block">Send</ion-button>
-    </ion-toolbar>
-  </ion-footer>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-input [(ngModel)]="userInput" placeholder="Type your message"></ion-input>
+    <ion-button (click)="sendMessage()" expand="block">Send</ion-button>
+  </ion-toolbar>
+</ion-footer>
