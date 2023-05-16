@@ -39,10 +39,16 @@ interface CameraOptions {
 
 export class FoodPage implements OnInit {
     ingredients: any[];
+
     allIngredients: any [];
+
     searchQuery: string;
+
     searchResults: any[];
+
     private currentUser: User;
+
+    private abortLoading = false;
 
     constructor(
         private firestore: Firestore,
@@ -107,6 +113,10 @@ export class FoodPage implements OnInit {
         this.loadIngredients();
     }
 
+    abortLoadingIngredient() {
+        this.abortLoading = true;
+    }
+
     async loadAllIngredients(): Promise<any> {
         try {
             this.allIngredients = await this.http.get<any>('assets/ingredients.json').toPromise();
@@ -120,6 +130,9 @@ export class FoodPage implements OnInit {
     }
 
     async presentLoading() {
+        if (this.abortLoading) {
+            return;
+        }
         const loading = await this.loadingController.create({
             message: 'Loading ingredients...',
         });
@@ -240,7 +253,6 @@ export class FoodPage implements OnInit {
             mediaType: this.camera.MediaType.PICTURE,
             sourceType: this.camera.PictureSourceType.CAMERA,
         };
-
         try {
             const actionSheet = await this.actionSheetController.create({
                 header: 'Select how you want to send your picture',
@@ -363,6 +375,7 @@ export class FoodPage implements OnInit {
             await this.loadIngredients();
             await this.loadingController.dismiss();
         } catch (error) {
+            this.abortLoadingIngredient();
             const alertError = await this.alertController.create({
                 header: 'ERROR VISION API',
                 message: JSON.stringify(error),
