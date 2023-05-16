@@ -11,5 +11,6 @@
 # Une version navigateur en production hébergée
   - https://smartcook-42.web.app/
   
+# Note
 Dans le cas où le build android est utilisé, si les PATH de Android Studio / Capacitor sont bien configurés, Android Studio s'ouvrira automatiquement et il sera possible de build/compiler pour lancer l'application via l'émulateur ou sur un device physique USB / WIFI.
 
