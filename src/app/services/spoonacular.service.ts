@@ -62,7 +62,7 @@ export class SpoonacularService {
   }
 
   sendChatMessage(message: string): Observable<any> {
-    const url = 'https://api.spoonacular.com/food/converse';
+    const url = `${this.apiUrl}/food/converse`;
     const params = {
       text: message,
       apiKey: this.apiKey

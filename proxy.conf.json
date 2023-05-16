@@ -1,0 +1,7 @@
+{
+  "/api": {
+    "target": "https://api.spoonacular.com",
+    "secure": true,
+    "changeOrigin": true
+  }
+}
