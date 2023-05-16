@@ -21,7 +21,6 @@ ion-icon {
 .refresh-button-container {
   display: flex;
   justify-content: center;
-  margin-top: 16px;
 }
 
 .refresh-button {
@@ -31,6 +30,6 @@ ion-icon {
   padding: 8px 16px;
 }
 
-
-
-
+.favorite-header ion-list {
+  text-align: center;
+}

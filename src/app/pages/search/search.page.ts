@@ -81,7 +81,6 @@ export class SearchPage implements OnInit {
                 }
             );
     }
-
     async presentLoading() {
         const loading = await this.loadingController.create({
             message: 'Loading recipes...'
@@ -91,8 +90,10 @@ export class SearchPage implements OnInit {
     }
 
     async searchRecipes() {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         await this.presentLoading();
         const intolerances = this.selectedIntolerances.join(',');
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         this.spoonacularService.searchRecipes(
             this.searchQuery,
             10,
