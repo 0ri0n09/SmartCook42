@@ -1,0 +1,15 @@
+.restaurant-card {
+  height: 100%;
+}
+
+.restaurant-image {
+  height: 150px;
+  object-fit: cover;
+}
+
+.centered-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2px;
+}
+

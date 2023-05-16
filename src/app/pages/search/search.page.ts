@@ -57,6 +57,7 @@ export class SearchPage implements OnInit {
     }
 
     async searchRecipesByIngredients(ingredients: string) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         const loading = await this.presentLoading();
         this.spoonacularService.searchRecipesByIngredients(ingredients)
             .subscribe(

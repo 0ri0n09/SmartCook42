@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>SmartCook</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-list>
+  <div class="favorite-header">
+    <ion-list>
+      <ion-list-header class="favorite-header-title">Search a restaurant near you</ion-list-header>
+    </ion-list>
+  </div>
+  <div class="centered-button-container">
+    <ion-button class="search-button" color="primary" (click)="getRestaurants()">
+      <ion-icon style="margin-right: 5px" name="restaurant"></ion-icon>
+      Search restaurants
+    </ion-button>
+  </div>
+  <!-- Cuisine filter-->
+  <ion-searchbar [placeholder]="'Search by cuisine (italian, french...)'"
+                 [(ngModel)]="cuisine"
+                 (ionClear)="clearSearch()">
+  </ion-searchbar>
+</ion-list>
+
+<ion-content>
+  <!-- Search results -->
+  <ion-list *ngIf="restaurants && restaurants.length > 0">
+    <ng-container *ngFor="let restaurant of restaurants">
+      <ion-card class="restaurant-card" (click)="openGoogleMap(restaurant)">
+        <ion-card-header>
+          <ion-card-title><strong>{{ restaurant.name.toUpperCase() }}</strong></ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-img [src]="restaurant.food_photos[0]" alt="No picture found for this restaurant" class="restaurant-image"></ion-img>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+  </ion-list>
+</ion-content>

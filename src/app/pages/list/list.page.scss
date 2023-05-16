@@ -16,3 +16,37 @@
 .empty-list .text {
   font-size: 1.5rem;
 }
+
+.ingredient-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ingredient-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ingredient-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-button {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.favorite-header-title {
+  margin-left: 50px;
+}
+
+.ion-align-items-center {
+  margin-top: 3px;
+}

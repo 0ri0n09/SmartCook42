@@ -9,10 +9,19 @@
     </ion-toolbar>
 </ion-header>
 
+<ion-list>
+    <div class="favorite-header">
+        <ion-list>
+            <ion-list-header class="favorite-header-title">Find recipes you like</ion-list-header>
+        </ion-list>
+    </div>
+</ion-list>
+
 <ion-content *ngIf="view === 'view1'">
     <ion-searchbar [placeholder]="'Search recipes...'"
                    [(ngModel)]="searchQuery"
-                   (ionChange)="searchRecipes()"></ion-searchbar>
+                   (ionChange)="searchRecipes()">
+    </ion-searchbar>
     <ion-grid>
         <ion-row>
             <ion-col>

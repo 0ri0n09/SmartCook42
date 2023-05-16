@@ -72,4 +72,14 @@ export class SpoonacularService {
     };
     return this.http.get<any>(url, options);
   }
+
+  getRestaurants(lat: string, lng: string, cuisine: string) {
+    let url;
+    if (cuisine) {
+      url = `${this.apiUrl}/food/restaurants/search?cuisine=${encodeURIComponent(cuisine)}&lat=${lat}&lng=${lng}&distance=3.21371&apiKey=${this.apiKey}`;
+    } else {
+      url = `${this.apiUrl}/food/restaurants/search?lat=${lat}&lng=${lng}&apiKey=${this.apiKey}`;
+    }
+    return this.http.get(url);
+  }
 }
