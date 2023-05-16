@@ -9,6 +9,7 @@
   - ng serve
 
 # Une version navigateur en production hébergée
+  - Penser à passer en vue adaptative dans le navigateur
   - https://smartcook-42.web.app/
   
 # Note
