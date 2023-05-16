@@ -93,14 +93,14 @@ export class RestaurantsPage implements OnInit {
     async getRestaurants() {
         await this.presentLoading();
         this.spoonacularService.getRestaurants(
-            "40.71263519694495",
-            "-74.04429775127",
+            "40.71362204862987",
+            "-74.0378222114517",
             this.cuisine
         ).subscribe(
             async (data: { restaurants: Restaurant[] }) => {
                 this.restaurants = data.restaurants;
                 const toast = await this.toastController.create({
-                    message: 'Searching restaurant done :)',
+                    message: 'Searching restaurants done :)',
                     duration: 2000,
                     position: 'top',
                     animated: true,
