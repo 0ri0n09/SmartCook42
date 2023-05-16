@@ -1,4 +1,4 @@
-# Projet SmartCook | Pinel Antony Jaremczuk Jonathan
+# Projet SmartCook | Pinel Antony - Jaremczuk Jonathan
 
 # Commandes pour build et lancer l'application via un IDE
   - npm install (depuis la racine du projet)
@@ -8,5 +8,8 @@
   - npm install (depuis la racine du projet)
   - ng serve
 
+# Une version navigateur en production hébergée
+  - https://smartcook-42.web.app/
+  
 Dans le cas où le build android est utilisé, si les PATH de Android Studio / Capacitor sont bien configurés, Android Studio s'ouvrira automatiquement et il sera possible de build/compiler pour lancer l'application via l'émulateur ou sur un device physique USB / WIFI.
 
