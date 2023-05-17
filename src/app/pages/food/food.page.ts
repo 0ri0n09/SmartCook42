@@ -204,6 +204,12 @@ export class FoodPage implements OnInit {
             this.firestore,
             `users/${this.currentUser.uid}/fridges/fridge/ingredients`
         );
+        const querySnapshot = await getDocs(ingredientsCollection);
+        const existingIngredient = querySnapshot.docs.find((doc) => doc.data().id === ingredientId);
+        if (existingIngredient) {
+            // Ingredient already exists do not add
+            return;
+        }
         try {
             await addDoc(ingredientsCollection, ingredient);
             const index = this.searchResults.findIndex((result) => result.id === ingredientId);
@@ -262,26 +268,26 @@ export class FoodPage implements OnInit {
                         handler: () => {
                             options.sourceType = this.camera.PictureSourceType.CAMERA;
                             this.getPicture(options);
-                        }
+                        },
                     },
                     {
                         text: 'Select a picture from your library',
                         handler: () => {
                             options.sourceType = this.camera.PictureSourceType.PHOTOLIBRARY;
                             this.getPicture(options);
-                        }
+                        },
                     },
                     {
                         text: 'Cancel',
-                        role: 'cancel'
-                    }
-                ]
+                        role: 'cancel',
+                    },
+                ],
             });
             await actionSheet.present();
         } catch (error) {
             const alertError = await this.alertController.create({
                 header: 'ERROR',
-                message: JSON.stringify(error),
+                message: error.message,
                 buttons: ['OK'],
             });
             await alertError.present();
@@ -308,36 +314,42 @@ export class FoodPage implements OnInit {
                     },
                 ],
             };
-            const response: any = await this.http.post<any>(visionAPIUrl, visionAPIRequest).toPromise();
+            const response: any = await this.http
+                .post<any>(visionAPIUrl, visionAPIRequest, {})
+                .toPromise();
             const labels = response.responses[0].labelAnnotations;
-            const descriptions = labels.map((label: any) => label.description.toLowerCase());
-            const jsonListIngredients = await this.http.get<any[]>('/assets/ingredients.json').toPromise();
+            const descriptions = labels.map((label: any) =>
+                label.description.toLowerCase()
+            );
+            const jsonListIngredients = await this.http
+                .get<any[]>('/assets/ingredients.json')
+                .toPromise();
             const uniqueIngredients: { [key: string]: boolean } = {};
-            let ingredientFound = false;
             for (const description of descriptions) {
                 const match = jsonListIngredients.find((item) => item.name === description);
                 if (match) {
                     try {
-                        const response = await this.spoonacularService.getIngredientInfosbyId(match.id).toPromise();
+                        const ingredientResponse = await this.spoonacularService
+                            .getIngredientInfosbyId(match.id)
+                            .toPromise();
                         const responseFiltered: {
                             id: number;
                             name: string;
                             image: string;
-                        } = response as {
+                        } = ingredientResponse as {
                             id: number;
                             name: string;
                             image: string;
                         };
-                        ingredientFound = true;
                         const ingredient = {
                             id: responseFiltered.id,
                             name: responseFiltered.name,
-                            image: responseFiltered.image
+                            image: responseFiltered.image,
                         };
                         const ingredientKey = JSON.stringify(ingredient);
                         if (!uniqueIngredients[ingredientKey]) {
                             uniqueIngredients[ingredientKey] = true;
-                            const existingIngredient = this.ingredients.find((i) => i.id === ingredient.id);
+                            const existingIngredient = this.ingredients.find((i) => i.name === ingredient.name && i.id === ingredient.id);
                             if (!existingIngredient) {
                                 await this.addIngredient(ingredient.id, ingredient.name, ingredient.image);
                             }
@@ -346,20 +358,20 @@ export class FoodPage implements OnInit {
                         console.error('Error getting ingredient:', error);
                         const alert = await this.alertController.create({
                             header: 'Error getting ingredient',
-                            message: error,
+                            message: error.message,
                             buttons: ['OK'],
                         });
                         await alert.present();
                     }
                 }
             }
-            if (ingredientFound) {
+            if (Object.keys(uniqueIngredients).length > 0) {
                 const toast = await this.toastController.create({
                     message: 'The ingredient(s) has been added successfully',
                     duration: 2000,
                     position: 'top',
                     animated: true,
-                    color: 'success'
+                    color: 'success',
                 });
                 toast.present();
             } else {
@@ -368,7 +380,7 @@ export class FoodPage implements OnInit {
                     duration: 2000,
                     position: 'top',
                     animated: true,
-                    color: 'danger'
+                    color: 'danger',
                 });
                 toast.present();
             }
@@ -377,8 +389,8 @@ export class FoodPage implements OnInit {
         } catch (error) {
             this.abortLoadingIngredient();
             const alertError = await this.alertController.create({
-                header: 'ERROR VISION API',
-                message: JSON.stringify(error),
+                header: 'Aborded',
+                message: error.message,
                 buttons: ['OK'],
             });
             await alertError.present();
