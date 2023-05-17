@@ -172,7 +172,7 @@ export class FoodPage implements OnInit {
     }
 
     async selectIngredients() {
-        await new Promise((resolve) => setTimeout(resolve, 1400));
+        //await new Promise((resolve) => setTimeout(resolve, 1400));
         await this.presentLoading();
         this.spoonacularService.searchIngredients(this.searchQuery).subscribe(
             async (response: any) => {
@@ -394,5 +394,10 @@ export class FoodPage implements OnInit {
         const ingredientNames = selectedIngredients.map(ingredient => ingredient.name);
         const ingredients = JSON.stringify(ingredientNames);
         this.router.navigate(['/search'], { queryParams: { searchIngredients: ingredients } });
+    }
+
+    clearSearchQuery() {
+        this.searchQuery = '';
+        this.searchResults = [];
     }
 }

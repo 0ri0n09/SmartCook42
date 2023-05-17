@@ -17,8 +17,9 @@
         </ion-button>
     </div>
     <!-- Cuisine filter-->
-    <ion-searchbar [placeholder]="'Search by cuisine (french, italian...)'"
+    <ion-searchbar [placeholder]="'Filter by cuisine (french, italian...)'"
                    [(ngModel)]="cuisine"
+                   (keyup.enter)="getRestaurants()"
                    (ionClear)="clearSearch()">
     </ion-searchbar>
 </ion-list>

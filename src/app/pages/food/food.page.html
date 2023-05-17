@@ -12,9 +12,10 @@
 
 <ion-list>
     <div class="favorite-header">
-        <ion-list>
+        <ion-list class="ion-align-items-center favorite-header-content">
             <ion-list-header class="favorite-header-title">My fridge ingredients</ion-list-header>
             <ion-list class="ion-align-items-center" style="margin-top: 3px">Search, fill and see what's in your fridge</ion-list>
+            <ion-list class="ion-align-items-center" style="margin-top: 3px; margin-left: 12px">(Select ingredients by tapping on it)</ion-list>
         </ion-list>
     </div>
     <!-- Search with fridge ingredients -->
@@ -24,8 +25,10 @@
             Search with my ingredients
         </ion-button>
     </div>
-    <ion-searchbar [placeholder]="'Search for ingredients...'" [(ngModel)]="searchQuery"
-                   (ionChange)="selectIngredients()"></ion-searchbar>
+    <ion-searchbar [placeholder]="'Search for ingredients...'"
+                   [(ngModel)]="searchQuery"
+                   (keyup.enter)="selectIngredients()"
+                   (ionClear)="clearSearchQuery()"></ion-searchbar>
 </ion-list>
 
 <ion-content>

@@ -48,16 +48,13 @@ export class SearchPage implements OnInit {
             }
         });
     }
-
     toggleContent() {
         this.view = this.view === 'view1' ? 'view2' : 'view1';
     }
-
     async searchRecipesByIngredients() {
         if (this.searchIngredients) {
             await this.presentLoading();
             try {
-                await this.delay(3000);
                 const response: any = await this.spoonacularService.searchRecipesByIngredients(this.searchIngredients).toPromise();
                 this.recipes = response;
                 if (this.recipes.length === 0) {
@@ -67,6 +64,15 @@ export class SearchPage implements OnInit {
                         position: 'top',
                         animated: true,
                         color: 'danger'
+                    });
+                    toast.present();
+                } else {
+                    const toast = await this.toastController.create({
+                        message: 'Recipes search done',
+                        duration: 2000,
+                        position: 'top',
+                        animated: true,
+                        color: 'success'
                     });
                     toast.present();
                 }
@@ -111,6 +117,16 @@ export class SearchPage implements OnInit {
                     position: 'top',
                     animated: true,
                     color: 'danger'
+                });
+                toast.present();
+            }
+            else {
+                const toast = await this.toastController.create({
+                    message: 'Recipes search done',
+                    duration: 2000,
+                    position: 'top',
+                    animated: true,
+                    color: 'success'
                 });
                 toast.present();
             }
@@ -175,10 +191,6 @@ export class SearchPage implements OnInit {
             });
             toast.present();
         }
-    }
-
-    delay(ms: number): Promise<void> {
-        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
     async presentLoading() {
