@@ -4,6 +4,7 @@ import { FavoritesService } from "../../services/favorites.service";
 import { LoadingController, ToastController} from "@ionic/angular";
 import { Subject } from 'rxjs';
 import {ActivatedRoute} from "@angular/router";
+import {debounceTime, filter} from "rxjs/operators";
 
 @Component({
     selector: 'app-search',
@@ -37,17 +38,13 @@ export class SearchPage implements OnInit {
     }
 
     ngOnInit() {
-        this.searchIngredients$.pipe(
-        ).subscribe((query) => {
-            this.searchRecipesByIngredients(query);
-        });
-
         this.activatedRoute.queryParams.subscribe(params => {
             if (params.searchIngredients) {
                 const ingredients = JSON.parse(params.searchIngredients);
                 this.searchIngredients = ingredients.join(' ');
                 this.searchIngredients$.next(this.searchIngredients);
-                this.searchRecipesByIngredients(this.searchIngredients);
+                this.searchQuery = ingredients.join(' ');
+                this.searchRecipesByIngredients();
             }
         });
     }
@@ -56,59 +53,16 @@ export class SearchPage implements OnInit {
         this.view = this.view === 'view1' ? 'view2' : 'view1';
     }
 
-    async searchRecipesByIngredients(ingredients: string) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        const loading = await this.presentLoading();
-        this.spoonacularService.searchRecipesByIngredients(ingredients)
-            .subscribe(
-                async (response: any) => {
-                    this.recipes = response;
-                    await loading.dismiss();
-                    if (this.recipes.length === 0) {
-                        const toast = await this.toastController.create({
-                            message: 'No recipes found with these ingredients',
-                            duration: 2000,
-                            position: 'top',
-                            animated: true,
-                            color: 'danger'
-                        });
-                        toast.present();
-                    }
-                },
-                async (error) => {
-                    console.log('Error searching recipes:', error);
-                    await loading.dismiss();
-                }
-            );
-    }
-    async presentLoading() {
-        const loading = await this.loadingController.create({
-            message: 'Loading recipes...'
-        });
-        await loading.present();
-        return loading;
-    }
-
-    async searchRecipes() {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        await this.presentLoading();
-        const intolerances = this.selectedIntolerances.join(',');
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        this.spoonacularService.searchRecipes(
-            this.searchQuery,
-            10,
-            this.selectedDiet,
-            this.selectedCuisine,
-            intolerances,
-            this.selectedType,
-            this.selectedOccasion
-        ).subscribe(
-            async (response: any) => {
-                this.recipes = response.results;
-                await this.loadingController.dismiss();
+    async searchRecipesByIngredients() {
+        if (this.searchIngredients) {
+            await this.presentLoading();
+            try {
+                await this.delay(3000);
+                const response: any = await this.spoonacularService.searchRecipesByIngredients(this.searchIngredients).toPromise();
+                this.recipes = response;
                 if (this.recipes.length === 0) {
                     const toast = await this.toastController.create({
-                        message: 'No recipes found with this search',
+                        message: 'No recipes found with these ingredients',
                         duration: 2000,
                         position: 'top',
                         animated: true,
@@ -116,12 +70,63 @@ export class SearchPage implements OnInit {
                     });
                     toast.present();
                 }
-            },
-            async (error) => {
+            } catch (error) {
                 console.log('Error searching recipes:', error);
+                const toast = await this.toastController.create({
+                    message: 'An error occurred: ' + error,
+                    duration: 2000,
+                    position: 'top',
+                    animated: true,
+                    color: 'danger'
+                });
+                toast.present();
+            } finally {
                 await this.loadingController.dismiss();
             }
-        );
+        }
+    }
+
+    onSearch() {
+        this.searchRecipes();
+    }
+
+    async searchRecipes() {
+        await this.presentLoading();
+        const intolerances = this.selectedIntolerances.join(',');
+        try {
+            const response: any = await this.spoonacularService.searchRecipes(
+                this.searchQuery,
+                10,
+                this.selectedDiet,
+                this.selectedCuisine,
+                intolerances,
+                this.selectedType,
+                this.selectedOccasion
+            ).toPromise();
+            this.recipes = response.results;
+            if (this.recipes.length === 0) {
+                const toast = await this.toastController.create({
+                    message: 'No recipes found with this search',
+                    duration: 2000,
+                    position: 'top',
+                    animated: true,
+                    color: 'danger'
+                });
+                toast.present();
+            }
+        } catch (error) {
+            console.log('Error searching recipes:', error);
+            const toast = await this.toastController.create({
+                message: 'An error occurred: ' + error,
+                duration: 2000,
+                position: 'top',
+                animated: true,
+                color: 'danger'
+            });
+            toast.present();
+        } finally {
+            await this.loadingController.dismiss();
+        }
     }
 
     async clearFilter(filter: string) {
@@ -170,5 +175,17 @@ export class SearchPage implements OnInit {
             });
             toast.present();
         }
+    }
+
+    delay(ms: number): Promise<void> {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async presentLoading() {
+        const loading = await this.loadingController.create({
+            message: 'Loading recipes...'
+        });
+        await loading.present();
+        return loading;
     }
 }

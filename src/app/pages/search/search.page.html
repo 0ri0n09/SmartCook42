@@ -20,14 +20,14 @@
 <ion-content *ngIf="view === 'view1'">
     <ion-searchbar [placeholder]="'Search recipes...'"
                    [(ngModel)]="searchQuery"
-                   (ionChange)="searchRecipes()">
+                   (keyup.enter)="onSearch()">
     </ion-searchbar>
     <ion-grid>
         <ion-row>
             <ion-col>
                 <ion-item>
                     <ion-label>Diet</ion-label>
-                    <ion-select [(ngModel)]="selectedDiet" (ionChange)="searchRecipes()">
+                    <ion-select [(ngModel)]="selectedDiet" (ionChange)="onSearch()">
                         <ion-select-option *ngFor="let diet of diets" [value]="diet">{{ diet }}</ion-select-option>
                     </ion-select>
                     <ion-button slot="end" fill="clear" size="small" (click)="clearFilter('diet')">Clear</ion-button>
@@ -36,7 +36,7 @@
             <ion-col>
                 <ion-item>
                     <ion-label>Cuisine</ion-label>
-                    <ion-select [(ngModel)]="selectedCuisine" (ionChange)="searchRecipes()">
+                    <ion-select [(ngModel)]="selectedCuisine" (ionChange)="onSearch()">
                         <ion-select-option *ngFor="let cuisine of cuisines"
                                            [value]="cuisine">{{ cuisine }}</ion-select-option>
                     </ion-select>
@@ -46,7 +46,7 @@
             <ion-col>
                 <ion-item>
                     <ion-label>Type</ion-label>
-                    <ion-select [(ngModel)]="selectedType" (ionChange)="searchRecipes()">
+                    <ion-select [(ngModel)]="selectedType" (ionChange)="onSearch()">
                         <ion-select-option *ngFor="let type of types" [value]="type">{{ type }}</ion-select-option>
                     </ion-select>
                     <ion-button slot="end" fill="clear" size="small" (click)="clearFilter('type')">Clear</ion-button>
@@ -55,7 +55,7 @@
             <ion-col>
                 <ion-item>
                     <ion-label>Intolerances</ion-label>
-                    <ion-select [(ngModel)]="selectedIntolerances" (ionChange)="searchRecipes()" multiple="true">
+                    <ion-select [(ngModel)]="selectedIntolerances" (ionChange)="onSearch()" multiple="true">
                         <ion-select-option *ngFor="let intolerance of intolerances"
                                            [value]="intolerance">{{ intolerance }}</ion-select-option>
                     </ion-select>
@@ -66,7 +66,7 @@
             <ion-col>
                 <ion-item>
                     <ion-label>Occasion</ion-label>
-                    <ion-select [(ngModel)]="selectedOccasion" (ionChange)="searchRecipes()">
+                    <ion-select [(ngModel)]="selectedOccasion" (ionChange)="onSearch()">
                         <ion-select-option *ngFor="let occasion of occasions"
                                            [value]="occasion">{{ occasion }}</ion-select-option>
                     </ion-select>
@@ -119,8 +119,8 @@
 </ion-content>
 
 <ion-content *ngIf="view === 'view2'">
-    <ion-searchbar (ionChange)="searchIngredients$.next(searchIngredients)"
-                   [(ngModel)]="searchIngredients"
+    <ion-searchbar [(ngModel)]="searchIngredients"
+                   (keyup.enter)="searchRecipesByIngredients()"
                    [placeholder]="'Search by ingredients...'"></ion-searchbar>
     <ng-container *ngIf="recipes && searchIngredients">
         <div class="favorite-header">
