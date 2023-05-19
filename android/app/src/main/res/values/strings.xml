@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">AuthStarterAngularFire</string>
-    <string name="title_activity_main">AuthStarterAngularFire</string>
+    <string name="app_name">SmartCook</string>
+    <string name="title_activity_main">SmartCook</string>
     <string name="package_name">io.ionic.smartcook42</string>
     <string name="custom_url_scheme">io.ionic.smartcook42</string>
 </resources>
