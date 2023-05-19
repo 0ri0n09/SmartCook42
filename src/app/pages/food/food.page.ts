@@ -310,6 +310,10 @@ export class FoodPage implements OnInit {
                                 type: 'LABEL_DETECTION',
                                 maxResults: 20,
                             },
+                            {
+                                type: 'TEXT_DETECTION',
+                                maxResults: 20,
+                            },
                         ],
                     },
                 ],
