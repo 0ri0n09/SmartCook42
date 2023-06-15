@@ -298,7 +298,7 @@ export class FoodPage implements OnInit {
         try {
             await this.presentLoading();
             const imageData = await this.camera.getPicture(options);
-            const visionAPIUrl = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyCzM3dSOLLxBqEOrthKOHYR6iqXNYrfSAA';
+            const visionAPIUrl = 'https://vision.googleapis.com/v1/images:annotate?key=YOUR_API_KEY';
             const visionAPIRequest = {
                 requests: [
                     {
